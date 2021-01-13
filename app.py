@@ -24,7 +24,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 
-# Define DB models here
+# DB models
 
 class Plane(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -37,8 +37,17 @@ class Plane(db.Model):
     last_update = db.Column(db.DateTime)
     ever_received_data = db.Column(db.Boolean)
 
-# API Endpoints
+    def seconds_since_last_update(self):
+        time_difference_seconds = datetime.utcnow() - self.last_update
+        return time_difference_seconds.seconds
+    
+    def is_current(self):
+        if minutes_since_last_update < (5 * 60):
+            return True
+        else:
+            return False
 
+# API Endpoints
 
 @app.route('/api/create_new_plane')
 def api_new_plane():
@@ -103,11 +112,12 @@ def api_view_plane_data(ident_public_key):
         'current_compass': plane.current_compass,
         'current_altitude': plane.current_altitude,
         'last_update': plane.last_update,
-        'ever_received_data': plane.ever_received_data
+        'ever_received_data': plane.ever_received_data,
+        'seconds_since_last_update': plane.seconds_since_last_update(),
+        'minutes_since_last_update': plane.seconds_since_last_update() / 60
     }
 
     return jsonify(output_dictionary)
-
 
 
 # The main event...
@@ -126,4 +136,4 @@ def show_map(ident_public_key):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5008, debug=True)
+    app.run(host='0.0.0.0', port=8765, debug=True)

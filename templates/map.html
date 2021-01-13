@@ -79,13 +79,17 @@
 		</div>
     </div>
 
+    <footer class="footer">
+        <div class="container">
+            <button type="button" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
+            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+        </div>
+    </footer>
+
 </div> <!-- Main container -->
 
-    <footer class="footer">
-        <span class="container">
-            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm">Connecting to <b>{{ ident_public_key }}</b></button>
-        </span>
-    </footer>
+
 
 
 <!-- Create map object -->

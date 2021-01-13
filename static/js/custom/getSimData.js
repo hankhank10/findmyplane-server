@@ -4,6 +4,9 @@ let latitude;
 let longitude;
 
 let lastConnectionTime;
+let lastPlaneTimestamp;
+
+let disconnectedFromServer = false;
 
 
 window.setInterval(function(){
@@ -15,17 +18,34 @@ window.setInterval(function(){
 function setConnectionStatus(statusToReport) {
 
     if (statusToReport == "connected") {
-        $('#btnServerStatus').removeClass('btn-warning').addClass('btn-success');
-        $('#btnServerStatus').html("Connected to <b>"+ident_public_key+"</b>");
+        $('#btnServerStatus').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
+        $('#btnServerStatus').html('<i class="fas fa-server"></i> Connected');
         lastConnectionTime = Date.now()/1000;
         $('#lastDataTime').html("")
+        disconnectedFromServer = false;
     }
 
     if (statusToReport == "error") {
-        $('#btnServerStatus').removeClass('btn-success').addClass('btn-warning');
-        $('#btnServerStatus').html('No data from <b>'+ident_public_key+'</b> since <span id="lastDataTime"></span>');
-        $('#lastDataTime').livestamp(lastConnectionTime);
+        $('#btnServerStatus').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+        $('#btnServerStatus').html('<i class="fas fa-server"></i> Disconnected <span id="lastDataTimeLabel"></span> &nbsp <i class="fas fa-sync fa-spin">');
+        $('#lastDataTimeLabel').livestamp(lastConnectionTime);
+        disconnectedFromServer = true;
     }
+}
+
+function setPlaneStatus(statusToReport) {
+
+    if (statusToReport == "recent") {
+        $('#btnPlaneStatus').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
+        $('#btnPlaneStatus').html('<i class="fas fa-plane"></i> Live');        
+    }
+
+    if (statusToReport == "old") {
+        $('#btnPlaneStatus').removeClass('btn-success').removeClass('btn-warning').addClass('btn-danger');
+        $('#btnPlaneStatus').html('<i class="fas fa-plane"></i> Last data <span id="lastPlaneTimestampLabel"></span> &nbsp <i class="fas fa-sync fa-spin">');
+        $('#lastPlaneTimestampLabel').livestamp(lastPlaneTimestamp);
+    }
+
 }
 
 function getSimulatorData() {
@@ -37,10 +57,20 @@ function getSimulatorData() {
         compass = data.current_compass;
         latitude = data.current_latitude;
         longitude = data.current_longitude;
+        lastPlaneTimestamp = data.last_update;
+        secondsSinceLastPlaneTimestamp = data.seconds_since_last_update;
 
     })
     .done(function() { setConnectionStatus('connected')})
-    .fail(function() { setConnectionStatus('error') });
+    .fail(function() { 
+        setConnectionStatus('error');
+    });
+
+    if (secondsSinceLastPlaneTimestamp < 15 && disconnectedFromServer != true) {
+        setPlaneStatus('recent');
+    } else {
+        setPlaneStatus('old')
+    }
 
     return false;
 }
