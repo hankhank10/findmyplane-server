@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Find My Plane</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- Leaflet CSS and JS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
+	<script src="/static/vendor/leaflet-providers/leaflet-providers.js"></script>
+	<script src='https://unpkg.com/leaflet.marker.slideto@0.2.0/Leaflet.Marker.SlideTo.js'></script>
+
+	<!-- Fontawesome JS-->
+	<script src="https://kit.fontawesome.com/99043d701d.js" crossorigin="anonymous"></script>
+
+	<!-- JQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<!-- JQuery UI -->
+	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/flick/jquery-ui.css">
+
+	<!-- Sweetalert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- Timeago -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.js" integrity="sha512-iI8K8K3jOTtAVphRhQ+i/SxVJnkk0C/TQv4MrMPATRuEHR3W4KvGAMe9tHeqFMOQ/jnd1cPDuq68VgK8ebW1VQ==" crossorigin="anonymous"></script>
+
+    <!-- Set script root-->
+	<script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+
+
+    <style>
+		html, body {
+			height: 100vh;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			display: flex;
+			flex-direction: column;
+		}
+    </style>
+
+</head>
+<body>
+
+<div class="container-fluid p-0" style="height: 100%; width: 100%;">  <!--Main container-->
+
+    <!-- NAVBAR -->
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top">
+		<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+			<ul class="navbar-nav mr-auto">
+				<button id=followModeButton class="btn btn-primary btn-sm" type="button" onclick="toggleFollowPlane()">
+					<i class="fas fa-location-arrow"></i> <span id=followMode>Moving map enabled</span>
+				</button>
+			</ul>
+		</div>
+		<div class="mx-auto order-0">
+			<a class="navbar-brand mx-auto" href="#">Find My Plane</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+    </nav>
+
+    <div class="row p-2" style="height: 85vh">
+		<div class="col-sm-12 col-xl-12 no-gutters collapse show p-0" style="background-color: grey;" id="map_column" style="position: relative; height=100%;">
+			<div id = "map" style = "height: 100%; width: 100%;"></div>
+		</div>
+    </div>
+
+</div> <!-- Main container -->
+
+    <footer class="footer">
+        <span class="container">
+            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm">Connecting to <b>{{ ident_public_key }}</b></button>
+        </span>
+    </footer>
+
+
+<!-- Create map object -->
+<script>
+
+    let followPlane = true;
+    let ident_public_key = '{{ ident_public_key }}';
+
+    // Create map options
+    var mapOptions = {
+        center: [41.8601, -87.6101],
+        zoom: 10,
+        dragging: true,
+    }
+
+    // Creating a map object
+    var map = new L.map('map', mapOptions);
+
+    // Creating a Layer object
+    var simple = new L.tileLayer.provider('CartoDB.Voyager');
+    var openstreet = new L.tileLayer.provider('OpenStreetMap.Mapnik');
+    var grayscale = new L.tileLayer.provider('CartoDB.Positron');
+    var basic = new L.tileLayer.provider('Jawg.Terrain', {
+        variant: '',
+        accessToken: 'CQVU4GpEMHf6XeTxVy2x2zRCDJpr6zFX61tYzcs27Jeus4kfc9XBUNfz3mhPakJZ'
+    });
+
+    var openaip_cached_basemap = new L.TileLayer("http://{s}.tile.maps.openaip.net/geowebcache/service/tms/1.0.0/openaip_basemap@EPSG%3A900913@png/{z}/{x}/{y}.png", {
+        maxZoom: 14,
+        minZoom: 4,
+        tms: true,
+        detectRetina: true,
+        subdomains: '12',
+        format: 'image/png',
+        transparent: true
+    });
+
+    // Adding layers to the map
+    map.addLayer(basic);
+
+    var baseLayers = {
+        "Grayscale": grayscale,
+        "Open Street": openstreet,
+        "Pale": simple,
+        "Default": basic,
+    }
+    var overlays = {
+        "Aviation": openaip_cached_basemap
+    }
+
+    // Add control
+    L.control.layers(baseLayers, overlays).addTo(map)
+
+    // Icon options
+    var iconOptions = {
+        iconUrl: '/static/img/plane.png',
+        iconSize: [35, 35]
+    }
+
+    // Creating a custom icon
+    var customIcon = L.icon(iconOptions);
+
+    // Creating Marker Options
+    var markerOptions = {
+        clickable: false,
+        draggable: false,
+        icon: customIcon,
+        rotationAngle: 0,
+        rotationOrigin: "center"
+    }
+
+    // Creating a Marker
+    var marker = L.marker([17.438139, 78.395830], markerOptions);
+
+    // Adding marker to the map
+    marker.addTo(map);
+
+</script>
+
+<script src="/static/js/custom/getSimData.js"></script>
+
+
+</body>
+</html>
