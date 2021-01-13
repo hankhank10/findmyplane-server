@@ -36,21 +36,28 @@ class Plane(db.Model):
     current_altitude = db.Column(db.Integer)
     last_update = db.Column(db.DateTime)
     ever_received_data = db.Column(db.Boolean)
+    title = db.Column(db.String)
+    atc_id = db.Column(db.String)
 
     def seconds_since_last_update(self):
         time_difference_seconds = datetime.utcnow() - self.last_update
         return time_difference_seconds.seconds
     
     def is_current(self):
-        if minutes_since_last_update < (5 * 60):
+        if self.seconds_since_last_update() < (5 * 60):
             return True
         else:
             return False
 
 # API Endpoints
 
-@app.route('/api/create_new_plane')
+@app.route('/api/create_new_plane', methods=['POST'])
 def api_new_plane():
+
+    data_received = request.json
+
+    print (data_received['title'])
+    print (data_received['atc_id'])
 
     # Generate upper case random public key
     letters = string.ascii_uppercase
@@ -67,6 +74,8 @@ def api_new_plane():
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
+        title = data_received['title'],
+        atc_id = data_received['atc_id'],
         ever_received_data = False
     )
     
@@ -132,6 +141,11 @@ def show_map(ident_public_key):
     plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
 
     return render_template('map.html', ident_public_key = ident_public_key)
+
+
+@app.route('/latestclient')
+def latest_client_check():
+    return "Alpha 0.2"
 
 
 if __name__ == '__main__':
