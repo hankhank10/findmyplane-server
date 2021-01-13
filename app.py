@@ -97,7 +97,6 @@ def api_update_location():
 
     db.session.commit()
 
-    print ("Data received: ", data_received['ident_public_key'])
     return "ok"
 
 
