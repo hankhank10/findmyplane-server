@@ -32,6 +32,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.js" integrity="sha512-iI8K8K3jOTtAVphRhQ+i/SxVJnkk0C/TQv4MrMPATRuEHR3W4KvGAMe9tHeqFMOQ/jnd1cPDuq68VgK8ebW1VQ==" crossorigin="anonymous"></script>
 
+	<!-- Microtip tooltips -->
+	<link rel="stylesheet" href="https://unpkg.com/microtip/microtip.css">
+
     <!-- Set script root-->
 	<script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -66,11 +69,18 @@
 			</ul>
 		</div>
 		<div class="mx-auto order-0">
-			<a class="navbar-brand mx-auto" href="#">Find My Plane</a>
+			<a class="navbar-brand mx-auto" href="https://findmyplane.live/">Find My Plane</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 		</div>
+		<div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item m-1">
+					<button class="btn btn-success btn-sm" type="button" aria-label="This site is free to use, and *almost* free to run" data-microtip-position="left" role="tooltip"><i class="fas fa-beer"></i> Buy me a beer</button>
+				</li>
+            </ul>
+        </div>
     </nav>
 
     <div class="row p-2" style="height: 85vh">
@@ -82,8 +92,8 @@
     <footer class="footer">
         <div class="container">
             <button type="button" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
-            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
-            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Server connection status" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Sim data status" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
         </div>
     </footer>
 
