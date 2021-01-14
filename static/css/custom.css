@@ -1,0 +1,44 @@
+.btn--toggle-03 {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  height: 100%;
+}
+
+.btn--toggle-03 p {
+  color: #fff;
+}
+
+.btn--toggle-03 p:last-child {
+  padding-right: 0;
+}
+
+.btn--toggle-06 {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 32px;
+  border: 1px solid #e5e5e5;
+  padding: 16px 20px;
+  background-color: #f6f6f6;
+}
+
+.btn--toggle-06 p:first-child {
+  padding-left: 0;
+}
+
+.btn--toggle-02 {
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  height: 100%;
+}
+
+.btn--toggle-02 p {
+  color: #000;
+}
+
+.btn--toggle-02 p:last-child {
+  padding-right: 0;
+}
+/*# sourceMappingURL=custom.css.map */

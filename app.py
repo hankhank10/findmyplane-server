@@ -14,7 +14,7 @@ import nearby_city_api
 
 # Define flask variables
 app = Flask(__name__)
-#app.secret_key = secretstuff.secret_key
+app.secret_key = 'sdfdsagfdggdfsgdfg988'
 #website_url = "http://localhost:5008/"
 
 # DB initialisation
@@ -161,15 +161,27 @@ def backend_update_plane_descriptions():
 
 # Public facing events ...
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return "Index"
+    if request.method == 'POST':
+        if request.form['ident'] == "":
+            flash('No ident provided')
+            return redirect (url_for('index'))
+        else:
+            return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
+
+    if request.method == 'GET':
+        return render_template('index.html')
 
 
 @app.route('/view/<ident_public_key>')
 def show_map(ident_public_key):
 
-    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
+    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
+
+    if bool(plane) == False:
+        flash ("No record of ident "+ ident_public_key)
+        return redirect(url_for('index'))
 
     return render_template('map.html', ident_public_key = ident_public_key)
 

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Find My Plane for MSFS2020</title>
+    <!-- Plugins CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css" integrity="sha512-wR4oNhLBHf7smjy0K4oqzdWumd+r5/+6QO/vDda76MW5iug4PT7v86FoEkySIJft3XA0Ae6axhIvHrqwm793Nw==" crossorigin="anonymous" />
+    <!-- fonts -->
+    <link rel="stylesheet" href="/static/fonts/ep-icon-fonts/css/ep-font.css">
+    <script src="https://kit.fontawesome.com/4de637ffa1.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/css/settings.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+    <div class="landing-wrapper">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+
+
+            <header class="site-header">
+                    <div class="container">
+                        <div class="row justify-content-center align-items-center position-relative">
+                            <div class="col-sm-4 col-6 col-lg-2 col-xl-2 order-lg-1">
+                                <div class="brand">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-7 col-lg-3 col-xl-3 offset-xl-1 d-none d-sm-block order-lg-3">
+                                <div class="header-btns">
+                                    <div class="btn-2">
+                                        <a target="blank" href="https://www.buymeacoffee.com/hankhank10">Buy me a beer</a>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div class="col-sm-1 col-6 col-lg-7 col-xl-6 position-static order-lg-2">
+                                <div class="main-navigation">
+                                    <ul class="main-menu">
+
+                                        <li class="menu-item "><a href="#view-flight">View Flight</a></li>
+                                
+                                        <li class="menu-item"><a href="#ongoing-flights">Ongoing Flights</a></li>
+                                
+                                        <li class="menu-item"><a href="#features">Features</a></li>
+                                
+                                        <li class="menu-item"><a href="#download">Download</a></li> 
+
+                                        <li class="menu-item"><a href="#built-right">Source code</a></li>   
+
+                                        </ul>
+                                </div>
+                                <div class="mobile-menu"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </header>
+
+        <div class="hero-area pt-4 pt-lg-5">
+            <div class="float-shapes">
+            </div>
+            <div class="container">
+                <div class="row justify-content-center justify-content-lg-start">
+                    <div class="col-md-8 col-lg-7 offset-lg-2">
+                        <h1 class="main-title">Find My Plane.</h1>
+
+                    </div>
+                    <div class="col-md-8 col-lg-6 offset-lg-2">
+                        <div class="hero-content-wrapper">
+                            <div class="main-content">
+                                <p>A simple, free, no-nonsense navigation map <br>for Microsoft Flight Simulator 2020</p>
+
+                            </div>
+                            <div class="compatible">
+                                <span>Runs anywhere:</span>
+                                <ul class="compatible-list">
+                                    <li class="list-item"><i class="fab fa-chrome fa-3x"></i></li>
+                                    <li class="list-item"><i class="fab fa-firefox fa-3x"></i></li>
+                                    <li class="list-item"><i class="fab fa-safari fa-3x"></i></li>
+                                    <li class="list-item"><i class="fab fa-windows fa-3x"></i></li>
+                                    <li class="list-item"><i class="fab fa-apple fa-3x"></i></li>
+                                    <li class="list-item"><i class="fab fa-android fa-3x"></i></li>
+
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 pt-lg-5">
+                        <div class="hero-btn">
+                            <a href="#download" class="btn btn--primary btn-height-60">Download Now</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="hero-img">
+                            <img src="/static/images/iphone3.png" alt="">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+         
+
+        <!-- Content Area 01-->
+        <section id="view-flight" class="content-section-01">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-5  col-md-6 col-sm-8">
+                        <div class="content-image">
+                            <img src="/static/image/content-image-1.png" alt="">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 offset-lg-1 col-md-6">
+                        <div class="content-right-content">
+                            <h2>View a flight?</h2>
+                            <p>
+                                If you have already downloaded the client, enter the IDENT code here to view the flight:
+                            </p>
+                            <form class="form-inline" action="#" method="post">
+                                <div class="form-group mb-2 mr-sm-2">
+                                    <input class="form-control form-control-lg mb-2" type="text" placeholder="IDENT code from client" name="ident" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonial Area -->
+        <section id="ongoing-flights" class="testimonial-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="section-title">
+                            <h2>Ongoing flights right now.</h2>
+                            <p>There are currently [number] flights ongoing.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-slider-wrapper">
+                    <div class="row justify-content-center position-relative">
+                        <div class="col-lg-10 ">
+                            <div class="testimonial-slider">
+                                <div class="single-slide">
+                                    <div class="testimonial-content">
+                                        <p align="center">
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-90"></i>
+                                        </p>
+                                        <p align="center">
+                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-slide">
+                                    <div class="testimonial-content">
+                                        <p align="center">
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-220"></i>
+                                        </p>
+                                        <p align="center">
+                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-slide">
+                                    <div class="testimonial-content">
+                                        <p align="center">
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-5"></i>
+                                        </p>
+                                        <p align="center">
+                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-slide">
+                                    <div class="testimonial-content">
+                                        <p align="center">
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-0"></i>
+                                        </p>
+                                        <p align="center">
+                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-slide">
+                                    <div class="testimonial-content">
+                                        <p align="center">
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-0"></i>
+                                        </p>
+                                        <p align="center">
+                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slider-btns"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Area-->
+        <section id="features" class="feature-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="section-title">
+                            <h2>Features: Simple, free flight tracking</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="row mb-d-30">
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-laptop"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>Easy to Use</h5>
+                                        <p>No complex setup, no configuration - just download, run the program and type in the short code on any browser</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-tablet"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>Access on any device</h5>
+                                        <p>View your map on Chrome, Firefox or Safari on Windows, Mac, iPad, Android - anywhere that runs a browser</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-wifi"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>Access on any network</h5>
+                                        <p>Connects through the internet, so view your map even when your secondary device is not connected to the same network</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>Free and open source</h5>
+                                        <p>No charge to download or use.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>No logins or passwords</h5>
+                                        <p>No need to create an account or remember a password. Every time you start a flight you are given a unique six digit ident code. Type it in on this site and you have your map.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb--30">
+                                <div class="feature-widget">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </div>
+                                    <div class="content">
+                                        <h5>Full featured map</h5>
+                                        <p>View your plane location on a street map, or overlay with aviation navaids</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Content Area 02 -->
+        <section id="download" class="content-section-02">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-sm-12 content-text content-left-content">
+                        <h2>Download now.</h2>
+                    </div>
+                    <div class="col-xl-6 col-sm-10 col-md-6 col-10 order-md-2 offset-xl-1 d-none d-md-block align-middle">
+                        <div class="content-image">
+                            <img src="/static/images/plane1.jpg" alt="">
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-sm-12 col-md-6 order-md-1">
+                        <div class="content-text content-left-content">
+                            <div class="content-small-card">
+                                <div class="card-icon">
+                                    <i class="fab fa-windows fa-2x"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h5>Windows .exe</h5>
+                                    <p>
+                                        The simple route - download and run an executable program. No configuration required.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="content-small-card">
+                                <div class="card-icon">
+                                    <a href="https://github.com/hankhank10/findmyplane-client" class="text-decoration-none"><i class="fab fa-python fa-2x"></i></a>
+                                </div>
+                                
+                                <div class="card-content">
+                                    <h5><a href="https://github.com/hankhank10/findmyplane-client" class="text-decoration-none">Python source code</a></h5>
+                                    <p>
+                                        Advanced users - download the Python 3 source code from github.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Content Area -->
+        <section id="built-right" class="content-section-03">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-5 col-sm-6 col-md-6 col-10 d-none d-md-block">
+                        <div class="content-img">
+                            <img src="/static/images/carbon3.png" alt="">
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 offset-xl-1 col-sm-12">
+                        <div class="content-right-content">
+                            <h2>Built right.</h2>
+                            <p>
+                                Flight Sim plugins and apps can be expensive, resource intensive and proprietrary. This one isn't.
+                            </p>
+                            <ul class="content-list">
+                                <li>
+                                    <span><i class="icon icon-check-2"></i></span>Free forever
+                                </li>
+                                <li>
+                                    <span><i class="icon icon-check-2"></i></span>Open source (if you like)
+                                </li>
+                                <li>
+                                    <span><i class="icon icon-check-2"></i></span>Lightweight (less than 200 lines of code)
+                                </li>
+                                <li>
+                                    <span><i class="icon icon-check-2"></i></span><a href="https://github.com/hankhank10/findmyplane-client">Download source code here</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="footer-section">
+            <div class="container">
+
+                </div>
+                <div class="copyright">
+                    <p>©2021 All right reserved. </p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Vendor JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.2/jquery-migrate.min.js" integrity="sha512-3fMsI1vtU2e/tVxZORSEeuMhXnT9By80xlmXlsOku7hNwZSHJjwcOBpmy+uu+fyWwGCLkMvdVbHkeoXdAzBv+w==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <!-- Plugins JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous"></script>
+    <script src="/static/meanmenu/jquery.meanmenu.js"></script>
+    <script src="/static/js/active.js"></script>
+</body>
+
+</html>
