@@ -103,6 +103,10 @@ def api_update_location():
     if plane_to_update.ever_received_data == False:
         plane_to_update.ever_received_data = True
 
+        plane_location = nearby_city_api.find_closest_city(plane.latitude, plane.longitude)
+        if plane_location['status'] == "success":
+            plane_to_update = plane_location['text_expression']
+
     plane_to_update.last_update = datetime.utcnow()
     plane_to_update.current_latitude = data_received['current_latitude']
     plane_to_update.current_longitude = data_received['current_longitude']
@@ -138,21 +142,24 @@ def api_view_plane_data(ident_public_key):
 @app.route('/backend/update_plane_descriptions')
 def backend_update_plane_descriptions():
 
-    planes = Plane.query.all()
+    planes = Plane.query.all()  #this should eventually be changed to only show current planes
     number_of_planes_updated = 0
 
     for plane in planes:
         plane_location = nearby_city_api.find_closest_city(plane.latitude, plane.longitude)
-        description_of_location = plane_location['text_expression']
-        plane.description_of_location = description_of_location
-        number_of_planes_updated =+ 1
-        print (description_of_location)
+        if plane_location['status'] == "success":
+            description_of_location = plane_location['text_expression']
+            plane.description_of_location = description_of_location
+            number_of_planes_updated =+ 1
+            print (description_of_location)
+        else:
+            print ("City API error")
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
 
 
-# The main event...
+# Public facing events ...
 
 @app.route('/')
 def index():
