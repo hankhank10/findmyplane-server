@@ -35,11 +35,12 @@ class Plane(db.Model):
     current_longitude = db.Column(db.Float)
     current_compass = db.Column(db.Integer)
     current_altitude = db.Column(db.Integer)
-    last_update = db.Column(db.DateTime)
+    last_update = db.Column(db.DateTime, default=0)
     ever_received_data = db.Column(db.Boolean)
     title = db.Column(db.String)
     atc_id = db.Column(db.String)
     description_of_location = db.Column(db.String)
+    full_plane_description = db.Column(db.String)
 
     def seconds_since_last_update(self):
         time_difference_seconds = datetime.utcnow() - self.last_update
@@ -99,21 +100,22 @@ def api_update_location():
 
     plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'], ident_private_key = data_received['ident_private_key']).first_or_404()
 
-    # Check if it is the first time data has been sent
-    if plane_to_update.ever_received_data == False:
-        plane_to_update.ever_received_data = True
-
-        plane_location = nearby_city_api.find_closest_city(plane.latitude, plane.longitude)
-        if plane_location['status'] == "success":
-            plane_to_update = plane_location['text_expression']
-
     plane_to_update.last_update = datetime.utcnow()
     plane_to_update.current_latitude = data_received['current_latitude']
     plane_to_update.current_longitude = data_received['current_longitude']
     plane_to_update.current_compass = data_received['current_compass']
     plane_to_update.current_altitude = data_received['current_altitude']
 
+    # Check if it is the first time data has been sent
+    first_time = False
+    if plane_to_update.ever_received_data == False:
+        plane_to_update.ever_received_data = True
+        first_time = True
+
     db.session.commit()
+
+    if first_time:
+        backend_update_plane_descriptions()
 
     return "ok"
 
@@ -150,6 +152,8 @@ def backend_update_plane_descriptions():
         if plane_location['status'] == "success":
             description_of_location = plane_location['text_expression']
             plane.description_of_location = description_of_location
+            plane.full_plane_description = plane.title + " at " + str(plane.altitude) + "ft " + description_of_location
+
             number_of_planes_updated =+ 1
             print (description_of_location)
         else:
@@ -157,6 +161,16 @@ def backend_update_plane_descriptions():
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
+
+
+def number_of_current_planes():
+    plane_count = Plane.query.filter(Plane.ever_received_data == True).all()
+    return len(plane_count())
+
+
+def some_random_current_planes(how_many = 5):
+    planes = Plane.query.filter(Plane.ever_received_data == True).limit(how_many).all()
+    return planes
 
 
 # Public facing events ...
