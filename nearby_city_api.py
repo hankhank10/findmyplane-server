@@ -2,14 +2,14 @@ import requests
 
 def find_closest_city (latitude, longitude):
 
-    latitude_string = "{0:+.05f}".format(lat)
-    longitude_string = "{0:+.05f}".format(lon)
+    latitude_string = "{0:+.05f}".format(latitude)
+    longitude_string = "{0:+.05f}".format(longitude)
 
     lat_lon_string = latitude_string+longitude_string
 
     url_to_get = "http://geodb-free-service.wirefreethought.com/v1/geo/locations/"+lat_lon_string+"/nearbyCities"
     data_to_pass = {
-        'radius': 10000,
+        'radius': 15000,
         'limit': 1,
         'minPopulation': 1000000
     }

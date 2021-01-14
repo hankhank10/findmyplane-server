@@ -148,16 +148,16 @@ def backend_update_plane_descriptions():
     number_of_planes_updated = 0
 
     for plane in planes:
-        plane_location = nearby_city_api.find_closest_city(plane.latitude, plane.longitude)
+        plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
         if plane_location['status'] == "success":
             description_of_location = plane_location['text_expression']
             plane.description_of_location = description_of_location
-            plane.full_plane_description = plane.title + " at " + str(plane.altitude) + "ft " + description_of_location
+            plane.full_plane_description = plane.title + " at " + str(plane.current_altitude) + "ft " + description_of_location
 
-            number_of_planes_updated =+ 1
-            print (description_of_location)
+            number_of_planes_updated += 1
+            print (plane.ident_public_key, plane.full_plane_description)
         else:
-            print ("City API error")
+            print ("City API status", plane_location['status'])
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
@@ -165,7 +165,7 @@ def backend_update_plane_descriptions():
 
 def number_of_current_planes():
     plane_count = Plane.query.filter(Plane.ever_received_data == True).all()
-    return len(plane_count())
+    return len(plane_count)
 
 
 def some_random_current_planes(how_many = 5):
@@ -185,7 +185,7 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        return render_template('index.html')
+        return render_template('index.html', number_of_current_planes=number_of_current_planes(), some_random_current_planes = some_random_current_planes())
 
 
 @app.route('/view/<ident_public_key>')

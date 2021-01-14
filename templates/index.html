@@ -154,7 +154,7 @@
                     <div class="col-lg-8">
                         <div class="section-title">
                             <h2>Ongoing flights right now.</h2>
-                            <p>There are currently [number] flights ongoing.</p>
+                            <p>There are currently {{ number_of_current_planes }} flights ongoing.</p>
                         </div>
                     </div>
                 </div>
@@ -162,56 +162,22 @@
                     <div class="row justify-content-center position-relative">
                         <div class="col-lg-10 ">
                             <div class="testimonial-slider">
+                                {% for row in some_random_current_planes %}
+                                
                                 <div class="single-slide">
                                     <div class="testimonial-content">
                                         <p align="center">
                                             <i class="fas fa-plane fa-3x" data-fa-transform="rotate-90"></i>
                                         </p>
-                                        <p align="center">
-                                            747 at 32,000 ft 22 miles from Miami, USA
+                                        <p align="center" class="text-decoration-none">
+                                            <a href="{{ url_for('show_map', ident_public_key = row.ident_public_key) }}" class="text-decoration-none">
+                                            {{row.full_plane_description}}
+                                            </a>
                                         </p>
                                     </div>
                                 </div>
-                                <div class="single-slide">
-                                    <div class="testimonial-content">
-                                        <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-220"></i>
-                                        </p>
-                                        <p align="center">
-                                            747 at 32,000 ft 22 miles from Miami, USA
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-slide">
-                                    <div class="testimonial-content">
-                                        <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-5"></i>
-                                        </p>
-                                        <p align="center">
-                                            747 at 32,000 ft 22 miles from Miami, USA
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-slide">
-                                    <div class="testimonial-content">
-                                        <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-0"></i>
-                                        </p>
-                                        <p align="center">
-                                            747 at 32,000 ft 22 miles from Miami, USA
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-slide">
-                                    <div class="testimonial-content">
-                                        <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-0"></i>
-                                        </p>
-                                        <p align="center">
-                                            747 at 32,000 ft 22 miles from Miami, USA
-                                        </p>
-                                    </div>
-                                </div>
+
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="slider-btns"></div>
