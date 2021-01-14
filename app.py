@@ -6,9 +6,10 @@ import string
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-#import secretstuff
 
 from datetime import datetime
+
+import nearby_city_api
 
 
 # Define flask variables
@@ -38,6 +39,7 @@ class Plane(db.Model):
     ever_received_data = db.Column(db.Boolean)
     title = db.Column(db.String)
     atc_id = db.Column(db.String)
+    description_of_location = db.Column(db.String)
 
     def seconds_since_last_update(self):
         time_difference_seconds = datetime.utcnow() - self.last_update
@@ -97,8 +99,11 @@ def api_update_location():
 
     plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'], ident_private_key = data_received['ident_private_key']).first_or_404()
 
+    # Check if it is the first time data has been sent
+    if plane_to_update.ever_received_data == False:
+        plane_to_update.ever_received_data = True
+
     plane_to_update.last_update = datetime.utcnow()
-    plane_to_update.ever_received_data = True
     plane_to_update.current_latitude = data_received['current_latitude']
     plane_to_update.current_longitude = data_received['current_longitude']
     plane_to_update.current_compass = data_received['current_compass']
@@ -126,6 +131,25 @@ def api_view_plane_data(ident_public_key):
     }
 
     return jsonify(output_dictionary)
+
+
+# Backend endpoints
+
+@app.route('/backend/update_plane_descriptions')
+def backend_update_plane_descriptions():
+
+    planes = Plane.query.all()
+    number_of_planes_updated = 0
+
+    for plane in planes:
+        plane_location = nearby_city_api.find_closest_city(plane.latitude, plane.longitude)
+        description_of_location = plane_location['text_expression']
+        plane.description_of_location = description_of_location
+        number_of_planes_updated =+ 1
+        print (description_of_location)
+
+    db.session.commit()
+    return str(number_of_planes_updated) + " plane descriptions updated"
 
 
 # The main event...
