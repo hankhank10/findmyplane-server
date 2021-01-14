@@ -14,6 +14,13 @@
     <script src="https://kit.fontawesome.com/4de637ffa1.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/static/css/settings.css">
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <meta name="apple-mobile-web-app-title" content="Find My Plane">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+
 </head>
 
 <body>
@@ -54,8 +61,10 @@
 
                                         <li class="menu-item "><a href="#view-flight">View Flight</a></li>
                                 
+                                        {% if number_of_current_planes != "0" %}
                                         <li class="menu-item"><a href="#ongoing-flights">Ongoing Flights</a></li>
-                                
+                                        {% endif %}
+                                        
                                         <li class="menu-item"><a href="#features">Features</a></li>
                                 
                                         <li class="menu-item"><a href="#download">Download</a></li> 
@@ -148,6 +157,7 @@
         </section>
 
         <!-- Testimonial Area -->
+        {% if number_of_current_planes != "0" %}
         <section id="ongoing-flights" class="testimonial-section">
             <div class="container">
                 <div class="row justify-content-center">
@@ -167,11 +177,12 @@
                                 <div class="single-slide">
                                     <div class="testimonial-content">
                                         <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-90"></i>
+                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-{{ row.current_compass_less_90 }}"></i>
                                         </p>
                                         <p align="center" class="text-decoration-none">
                                             <a href="{{ url_for('show_map', ident_public_key = row.ident_public_key) }}" class="text-decoration-none">
-                                            {{row.full_plane_description}}
+                                            {{ row.full_plane_description }}
+                                            on heading {{ row.current_compass|round|int }}
                                             </a>
                                         </p>
                                     </div>
@@ -185,6 +196,7 @@
                 </div>
             </div>
         </section>
+        {% endif %}
 
         <!-- Feature Area-->
         <section id="features" class="feature-section">

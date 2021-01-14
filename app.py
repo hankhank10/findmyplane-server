@@ -5,6 +5,8 @@ import random
 import string
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from flask_migrate import Migrate
 
 from datetime import datetime
@@ -42,12 +44,23 @@ class Plane(db.Model):
     description_of_location = db.Column(db.String)
     full_plane_description = db.Column(db.String)
 
+    @hybrid_property
+    def current_compass_less_90(self):
+        compass = self.current_compass - 90
+        if compass < 0:
+            compass = compass + 360
+        return compass
+
+    @hybrid_property
     def seconds_since_last_update(self):
+        #print (str(self.id), self.last_update)
+            
         time_difference_seconds = datetime.utcnow() - self.last_update
         return time_difference_seconds.seconds
     
+    @hybrid_property
     def is_current(self):
-        if self.seconds_since_last_update() < (5 * 60):
+        if self.seconds_since_last_update < (5 * 60):
             return True
         else:
             return False
@@ -58,9 +71,6 @@ class Plane(db.Model):
 def api_new_plane():
 
     data_received = request.json
-
-    print (data_received['title'])
-    print (data_received['atc_id'])
 
     # Generate upper case random public key
     letters = string.ascii_uppercase
@@ -132,8 +142,8 @@ def api_view_plane_data(ident_public_key):
         'current_altitude': plane.current_altitude,
         'last_update': plane.last_update,
         'ever_received_data': plane.ever_received_data,
-        'seconds_since_last_update': plane.seconds_since_last_update(),
-        'minutes_since_last_update': plane.seconds_since_last_update() / 60
+        'seconds_since_last_update': plane.seconds_since_last_update,
+        'minutes_since_last_update': plane.seconds_since_last_update / 60
     }
 
     return jsonify(output_dictionary)
@@ -148,29 +158,57 @@ def backend_update_plane_descriptions():
     number_of_planes_updated = 0
 
     for plane in planes:
-        plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
-        if plane_location['status'] == "success":
-            description_of_location = plane_location['text_expression']
-            plane.description_of_location = description_of_location
-            plane.full_plane_description = plane.title + " at " + str(plane.current_altitude) + "ft " + description_of_location
+        if plane.is_current and plane.ever_received_data:
+            plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
+            if plane_location['status'] == "success":
+                description_of_location = plane_location['text_expression']
+                plane.description_of_location = description_of_location
 
-            number_of_planes_updated += 1
-            print (plane.ident_public_key, plane.full_plane_description)
-        else:
-            print ("City API status", plane_location['status'])
+                # Format altitude
+                altitude = plane.current_altitude
+                altitude = round(altitude,-3)
+                altitude = '{:.0f}'.format(altitude)
+
+                if plane.current_altitude != None:
+                    plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                else:
+                    plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
+
+                number_of_planes_updated += 1
+                #print (plane.ident_public_key, plane.full_plane_description)
+            else:
+                #print ("City API status", plane_location['status'])
+                pass
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
 
 
+@app.route('/number_of_planes')
 def number_of_current_planes():
-    plane_count = Plane.query.filter(Plane.ever_received_data == True).all()
-    return len(plane_count)
+    plane_list = Plane.query.filter(Plane.ever_received_data == True).all()
+
+    plane_count = 0
+    for plane in plane_list:
+        if plane.is_current:
+            plane_count = plane_count + 1
+
+    return str(plane_count)
 
 
 def some_random_current_planes(how_many = 5):
-    planes = Plane.query.filter(Plane.ever_received_data == True).limit(how_many).all()
-    return planes
+    planes_list = Plane.query.filter(Plane.ever_received_data == True).order_by(Plane.last_update.desc()).limit(how_many*2).all()
+
+    plane_count = 0
+    filtered_planes_list = []
+
+    for plane in planes_list:
+        if plane.is_current:
+            if plane_count <= how_many -1:
+                filtered_planes_list.append(plane)
+                plane_count = plane_count + 1
+
+    return filtered_planes_list
 
 
 # Public facing events ...
@@ -185,7 +223,7 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        return render_template('index.html', number_of_current_planes=number_of_current_planes(), some_random_current_planes = some_random_current_planes())
+        return render_template('index.html', number_of_current_planes=number_of_current_planes(), some_random_current_planes = some_random_current_planes(10))
 
 
 @app.route('/view/<ident_public_key>')

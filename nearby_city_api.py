@@ -25,7 +25,20 @@ def find_closest_city (latitude, longitude):
     if r.json()['data'] == []:
         return {'status': 'error'}
 
-    text_expression = str(round(r.json()['data'][0]['distance'])) + " miles from " + str(r.json()['data'][0]['name'] + ", "+ r.json()['data'][0]['country'])
+    distance = r.json()['data'][0]['distance']
+    distance = round(distance,-2)
+    distance = '{:.0f}'.format(distance)
+
+    if distance == "0":
+        distance = "over "
+    else:
+        distance = str(distance) + " miles from "
+
+    text_expression = distance + str(r.json()['data'][0]['name'] + ", "+ r.json()['data'][0]['country'])
+    
+
+    '{:.2f}'.format(round(2606.89579999999, 2))
+
     dictionary_to_return = {
         'status': "success",
         'name': r.json()['data'][0]['name'],
