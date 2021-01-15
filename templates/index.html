@@ -185,7 +185,7 @@
                                         <p align="center" class="text-decoration-none">
                                             <a href="{{ url_for('show_map', ident_public_key = row.ident_public_key) }}" class="text-decoration-none">
                                             {{ row.full_plane_description }}
-                                            on heading {{ row.current_compass|round|int }}
+                                            on heading {{ row.current_compass }}
                                             </a>
                                         </p>
                                     </div>

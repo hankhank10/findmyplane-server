@@ -36,8 +36,8 @@ class Plane(db.Model):
     ident_private_key = db.Column(db.String)
     current_latitude = db.Column(db.Float)
     current_longitude = db.Column(db.Float)
-    current_compass = db.Column(db.Integer)
-    current_altitude = db.Column(db.Integer)
+    current_compass = db.Column(db.Integer, default=0)
+    current_altitude = db.Column(db.Integer, default=0)
     last_update = db.Column(db.DateTime, default=0)
     ever_received_data = db.Column(db.Boolean)
     title = db.Column(db.String)
@@ -50,7 +50,11 @@ class Plane(db.Model):
         if self.current_compass != None:
             return 0
 
-        compass = self.current_compass - 90
+        try:
+            compass = self.current_compass - 90
+        except:
+            return 0
+        
         if compass < 0:
             compass = compass + 360
         return compass
@@ -152,10 +156,17 @@ def api_update_location():
     # Update plane information
     plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'].upper(), ident_private_key = data_received['ident_private_key']).first_or_404()
 
+    current_compass = data_received['current_compass']
+    if current_compass == None:
+        current_compass = 0
+    else:
+        current_compass = round(current_compass,0)
+        current_compass = '{:.0f}'.format(current_compass)
+
     plane_to_update.last_update = datetime.utcnow()
     plane_to_update.current_latitude = data_received['current_latitude']
     plane_to_update.current_longitude = data_received['current_longitude']
-    plane_to_update.current_compass = data_received['current_compass']
+    plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
 
     # Check if it is the first time data has been sent
@@ -167,15 +178,17 @@ def api_update_location():
     #db.session.commit()
 
     # Create waypoint record
-    new_waypoint = Waypoint (
-        ident_public_key = data_received['ident_public_key'].upper(),
-        latitude = data_received['current_latitude'],
-        longitude = data_received['current_longitude'],
-        compass = data_received['current_compass'],
-        altitude = data_received['current_altitude']
-    )
+    if data_received['ident_public_key'] != "DUMMY":
+        new_waypoint = Waypoint (
+            ident_public_key = data_received['ident_public_key'].upper(),
+            latitude = data_received['current_latitude'],
+            longitude = data_received['current_longitude'],
+            compass = data_received['current_compass'],
+            altitude = data_received['current_altitude']
+        )
     
-    db.session.add(new_waypoint)
+        db.session.add(new_waypoint)
+        
     db.session.commit()
 
     latitude = db.Column(db.Float)
