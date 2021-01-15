@@ -47,6 +47,9 @@ class Plane(db.Model):
 
     @hybrid_property
     def current_compass_less_90(self):
+        if self.current_compass != None:
+            return 0
+
         compass = self.current_compass - 90
         if compass < 0:
             compass = compass + 360
@@ -142,6 +145,9 @@ def api_new_plane():
 def api_update_location():
 
     data_received = request.json
+
+    if data_received['current_latitude'] == 0 and data_received['current_longitude'] == 0:
+        return "ignoring as null island"
 
     # Update plane information
     plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'].upper(), ident_private_key = data_received['ident_private_key']).first_or_404()
