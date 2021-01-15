@@ -1,17 +1,26 @@
 let altitude;
 let compass;
+
 let latitude;
 let longitude;
+
+let latitude_minus_1;
+let longitude_minus_1;
+
+let latitude_minus_2;
+let longitude_minus_2;
 
 let lastConnectionTime;
 let lastPlaneTimestamp;
 
 let disconnectedFromServer = false;
+let pointsDrawn = 0;
 
 
 window.setInterval(function(){
     getSimulatorData();
     updateMap()
+    drawLine()
 }, 2000);
 
 
@@ -72,7 +81,6 @@ function getSimulatorData() {
         setPlaneStatus('old')
     }
 
-    return false;
 }
 
 function toggleFollowPlane() {
@@ -98,6 +106,50 @@ function updateMap() {
     if (followPlane === true) {
         map.panTo(pos);
     }
+}
+
+
+function drawLine() {
+
+    console.log (pointsDrawn)
+
+    if (pointsDrawn == 0) {
+        latitude_minus_1 = latitude;
+        longitude_minus_1 = longitude;
+        pointsDrawn = pointsDrawn + 1;
+        return
+    }
+
+    if (pointsDrawn == 1) {
+        latitude_minus_2 = latitude_minus_1;
+        longitude_minus_2 = longitude_minus_1;
+        pointsDrawn = pointsDrawn + 1;
+        return
+    }
+
+    pointsDrawn = pointsDrawn + 1;
+
+    var polylinePoints = [
+        [latitude_minus_2, longitude_minus_2],
+        [latitude_minus_1, longitude_minus_1]
+    ];   
+      
+    var polylineOptions = {
+        color: 'blue',
+        weight: 6,
+        opacity: 0.9
+      };
+
+    var polyline = new L.Polyline(polylinePoints, polylineOptions);
+
+    map.addLayer(polyline);
+
+    latitude_minus_2 = latitude_minus_1;
+    longitude_minus_2 = longitude_minus_1;
+
+    latitude_minus_1 = latitude;
+    longitude_minus_1 = longitude;
+
 }
 
 
