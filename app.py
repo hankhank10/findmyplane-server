@@ -110,6 +110,8 @@ def api_new_plane():
     public_key = ''.join(random.choice(letters) for i in range(5))
     private_key = secrets.token_urlsafe(20)
 
+    plane_title = data_received['title'].replace("Asobo", "")
+
     new_plane = Plane (
         ident_public_key = public_key,
         ident_private_key = private_key,
@@ -118,7 +120,7 @@ def api_new_plane():
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
-        title = data_received['title'],
+        title = plane_title,
         atc_id = data_received['atc_id'],
         ever_received_data = False
     )
