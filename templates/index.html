@@ -96,7 +96,7 @@
 
                             </div>
                             <div class="compatible">
-                                <span>Runs anywhere:</span>
+                                <span>View your map anywhere:</span>
                                 <ul class="compatible-list">
                                     <li class="list-item"><i class="fab fa-chrome fa-3x"></i></li>
                                     <li class="list-item"><i class="fab fa-firefox fa-3x"></i></li>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="col-lg-12">
                         <div class="hero-img">
-                            <img src="/static/images/iphone3.png" alt="">
+                            <img src="/static/images/responsive.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                 <div class="row">
                     <div class="col-lg-5  col-md-6 col-sm-8">
                         <div class="content-image">
-                            <img src="/static/image/content-image-1.png" alt="">
+                            <img src="/static/images/ipad-pro-1.png" alt="">
                         </div>
                     </div>
 
@@ -150,6 +150,9 @@
                                 <button type="submit" class="btn btn-primary mb-2">Submit</button>
                             </form>
 
+                            <p><br>Or if you want to see a live example:</p>
+                            <p><a href="{{ url_for('show_map', ident_public_key='DUMMY')}}" class="btn btn-primary mb-2">View example</a></p>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -293,19 +296,21 @@
                     </div>
                     <div class="col-xl-6 col-sm-10 col-md-6 col-10 order-md-2 offset-xl-1 d-none d-md-block align-middle">
                         <div class="content-image">
-                            <img src="/static/images/plane1.jpg" alt="">
+                            <img src="/static/images/galaxy4.png" alt="">
                         </div>
                     </div>
                     <div class="col-xl-5 col-sm-12 col-md-6 order-md-1">
                         <div class="content-text content-left-content">
                             <div class="content-small-card">
                                 <div class="card-icon">
-                                    <i class="fab fa-windows fa-2x"></i>
+                                    <a href="{{ url_for('download_link') }}" class="text-decoration-none"><i class="fab fa-windows fa-2x"></i></a>
                                 </div>
                                 <div class="card-content">
-                                    <h5>Windows .exe</h5>
+                                    <h5>
+                                        <a href="{{ url_for('download_link') }}" class="text-decoration-none">Windows .exe</a>
+                                    </h5>
                                     <p>
-                                        The simple route - download and run an executable program. No configuration required.
+                                        <a href="{{ url_for('download_link') }}" class="text-decoration-none">The simple route - download and run an executable program. No configuration required.</a>
                                     </p>
                                 </div>
                             </div>
@@ -317,7 +322,7 @@
                                 <div class="card-content">
                                     <h5><a href="https://github.com/hankhank10/findmyplane-client" class="text-decoration-none">Python source code</a></h5>
                                     <p>
-                                        Advanced users - download the Python 3 source code from github.
+                                        <a href="https://github.com/hankhank10/findmyplane-client" class="text-decoration-none">Advanced users - download the Python 3 source code from github.</a>
                                     </p>
                                 </div>
                             </div>
@@ -342,7 +347,7 @@
                         <div class="content-right-content">
                             <h2>Built right.</h2>
                             <p>
-                                Flight Sim plugins and apps can be expensive, resource intensive and proprietrary. This one isn't.
+                                Flight Sim plugins and apps can be expensive, resource-intensive and proprietrary. This one isn't.
                             </p>
                             <ul class="content-list">
                                 <li>

@@ -12,6 +12,7 @@ from flask_migrate import Migrate
 from datetime import datetime
 
 import nearby_city_api
+import stats_handler
 
 
 # Define flask variables
@@ -31,7 +32,7 @@ migrate = Migrate(app, db)
 
 class Plane(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ident_public_key = db.Column(db.String)
+    ident_public_key = db.Column(db.String(6))
     ident_private_key = db.Column(db.String)
     current_latitude = db.Column(db.Float)
     current_longitude = db.Column(db.Float)
@@ -65,7 +66,38 @@ class Plane(db.Model):
         else:
             return False
 
+
+class Waypoint(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ident_public_key = db.Column(db.String(6), db.ForeignKey('plane.ident_public_key'), nullable=False)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    compass = db.Column(db.Integer)
+    altitude = db.Column(db.Integer)
+
+
 # API Endpoints
+@app.route('/api/create_dummy_plane')
+def api_dummy_plane():
+
+    new_plane = Plane (
+        ident_public_key = "DUMMY",
+        ident_private_key = "dummydata",
+        current_latitude = 0,
+        current_longitude = 0,
+        current_compass = 0,
+        current_altitude = 0,
+        last_update = datetime.utcnow(),
+        title = "Boeing 747",
+        atc_id = "AFC 156",
+        ever_received_data = False
+    )
+    
+    db.session.add(new_plane)
+    db.session.commit()
+
+    return "ok"
+
 
 @app.route('/api/create_new_plane', methods=['POST'])
 def api_new_plane():
@@ -74,9 +106,8 @@ def api_new_plane():
 
     # Generate upper case random public key
     letters = string.ascii_uppercase
-    public_key = ''.join(random.choice(letters) for i in range(5))
 
-    # Generate random private key
+    public_key = ''.join(random.choice(letters) for i in range(5))
     private_key = secrets.token_urlsafe(20)
 
     new_plane = Plane (
@@ -100,6 +131,8 @@ def api_new_plane():
         "ident_private_key": private_key
     }
 
+    stats_handler.increment_stat('planes_created')
+
     return jsonify(output_dictionary)
 
 
@@ -108,7 +141,8 @@ def api_update_location():
 
     data_received = request.json
 
-    plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'], ident_private_key = data_received['ident_private_key']).first_or_404()
+    # Update plane information
+    plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'].upper(), ident_private_key = data_received['ident_private_key']).first_or_404()
 
     plane_to_update.last_update = datetime.utcnow()
     plane_to_update.current_latitude = data_received['current_latitude']
@@ -122,10 +156,29 @@ def api_update_location():
         plane_to_update.ever_received_data = True
         first_time = True
 
+    #db.session.commit()
+
+    # Create waypoint record
+    new_waypoint = Waypoint (
+        ident_public_key = data_received['ident_public_key'].upper(),
+        latitude = data_received['current_latitude'],
+        longitude = data_received['current_longitude'],
+        compass = data_received['current_compass'],
+        altitude = data_received['current_altitude']
+    )
+    
+    db.session.add(new_waypoint)
     db.session.commit()
+
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    compass = db.Column(db.Integer)
+    altitude = db.Column(db.Integer)
 
     if first_time:
         backend_update_plane_descriptions()
+
+    if data_received['ident_public_key'] != "DUMMY": stats_handler.increment_stat('location_updates')
 
     return "ok"
 
@@ -223,11 +276,14 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
+        stats_handler.increment_stat('homepage_loads')
         return render_template('index.html', number_of_current_planes=number_of_current_planes(), some_random_current_planes = some_random_current_planes(10))
 
 
 @app.route('/view/<ident_public_key>')
 def show_map(ident_public_key):
+
+    ident_public_key = ident_public_key.upper()
 
     plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
 
@@ -235,12 +291,21 @@ def show_map(ident_public_key):
         flash ("No record of ident "+ ident_public_key)
         return redirect(url_for('index'))
 
+    stats_handler.increment_stat('map_loads')
+
     return render_template('map.html', ident_public_key = ident_public_key)
 
 
 @app.route('/latestclient')
 def latest_client_check():
     return "Alpha 0.2"
+
+
+@app.route('/download/findmyplane-client.zip')
+def download_link():
+    stats_handler.increment_stat('downloads')
+
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/a0.2/findmyplane-client.zip')
 
 
 if __name__ == '__main__':
