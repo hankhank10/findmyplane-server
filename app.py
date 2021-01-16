@@ -17,7 +17,9 @@ import stats_handler
 
 # Define flask variables
 app = Flask(__name__)
+import parse_pln
 app.secret_key = 'sdfdsagfdggdfsgdfg988'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # DB initialisation
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///findmyplanedb.sqlite'

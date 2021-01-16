@@ -6,5 +6,5 @@
 /.vscode
 /migrations
 findmyplanedb.sqlite
-
+/uploads
 .vscode/settings.json

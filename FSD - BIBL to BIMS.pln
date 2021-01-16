@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SimBase.Document Type="AceXML" version="1,0">
+  <Descr>AceXML Document</Descr>
+  <FlightPlan.FlightPlan>
+    <Title>BIBL to BIMS</Title>
+    <FPType>VFR</FPType>
+    <CruisingAlt>5000</CruisingAlt>
+    <DepartureID>BIBL</DepartureID>
+    <DepartureLLA>N65° 38' 43.61",W20° 17' 14.37",+153</DepartureLLA>
+    <DestinationID>BIMS</DestinationID>
+    <DestinationLLA>N64° 10' 53.93",W21° 42' 23.43",+18</DestinationLLA>
+    <Descr>Blonduos to Tungubakkar Airport</Descr>
+    <DepartureName>Blonduos</DepartureName>
+    <DestinationName>Tungubakkar Airport</DestinationName>
+    <AppVersion>
+      <AppVersionMajor>11</AppVersionMajor>
+      <AppVersionBuild>282174</AppVersionBuild>
+    </AppVersion>
+    <ATCWaypoint id="BIBL">
+      <ATCWaypointType>Airport</ATCWaypointType>
+      <WorldPosition>N65° 38' 43.61",W20° 17' 14.37",+153</WorldPosition>
+      <ICAO>
+        <ICAOIdent>BIBL</ICAOIdent>
+      </ICAO>
+    </ATCWaypoint>
+    <ATCWaypoint id="Hvitserkur">
+      <ATCWaypointType>User</ATCWaypointType>
+      <WorldPosition>N65° 36' 22.73",W20° 38' 6.85",+000000.00</WorldPosition>
+    </ATCWaypoint>
+    <ATCWaypoint id="Myvatn">
+      <ATCWaypointType>User</ATCWaypointType>
+      <WorldPosition>N65° 36' 13.90",W16° 59' 45.98",+000000.00</WorldPosition>
+    </ATCWaypoint>
+    <ATCWaypoint id="Vatnajokull National Park">
+      <ATCWaypointType>User</ATCWaypointType>
+      <WorldPosition>N64° 47' 3.48",W17° 12' 32.79",+000000.00</WorldPosition>
+    </ATCWaypoint>
+    <ATCWaypoint id="Landmannalaugar">
+      <ATCWaypointType>User</ATCWaypointType>
+      <WorldPosition>N63° 58' 58.80",W19° 4' 1.20",+000000.00</WorldPosition>
+    </ATCWaypoint>
+    <ATCWaypoint id="Thingvellir National Park">
+      <ATCWaypointType>User</ATCWaypointType>
+      <WorldPosition>N64° 15' 21.31",W21° 7' 46.38",+000000.00</WorldPosition>
+    </ATCWaypoint>
+    <ATCWaypoint id="BIMS">
+      <ATCWaypointType>Airport</ATCWaypointType>
+      <WorldPosition>N65° 38' 43.61",W20° 17' 14.37",+153</WorldPosition>
+      <ICAO>
+        <ICAOIdent>BIMS</ICAOIdent>
+      </ICAO>
+    </ATCWaypoint>
+  </FlightPlan.FlightPlan>
+</SimBase.Document>
