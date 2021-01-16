@@ -42,10 +42,12 @@ def update_location():
         if verbose: print ("Sending ", data_to_send)
         
         try:
-            r = requests.post(website_address+"/api/update_plane_location", json=data_to_send)
+            url_to_post_to = website_address+"/api/update_plane_location"
+            #print(url_to_post_to)
+            r = requests.post(url_to_post_to, json=data_to_send)
             if r.status_code != 200:
                 server_errors_logged += 1
-                
+
         except:
             if verbose: print ("Error sending data")
             server_errors_logged += 1
@@ -59,7 +61,7 @@ def update_location():
 
 # Settings
 website_address = "http://localhost"
-website_port = 8755
+website_port = 8765
 website_address = website_address + ":" + str(website_port)
 
 delay_after_failed_new_plane_request = 3
@@ -81,7 +83,7 @@ print("# CONNECTING TO SERVER IN TEST MODE")
 ident_public_key = "DUMMY"
 ident_private_key = "dummydata"
 
-print ("Connected to server at", website_address)
+print ("Server set as", website_address)
 print ("Ident public key =", str(ident_public_key))
 print ("Press CTRL-C to exit")
 print ()

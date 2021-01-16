@@ -94,6 +94,18 @@ function toggleFollowPlane() {
     }
 }
 
+function toggleShowTrack() {
+    showTrack = !showTrack;
+    if (showTrack === true) {
+        $("#showTrackMode").text("Track history enabled")
+        $("#showTrackButton").removeClass("btn-outline-danger").addClass("btn-primary")
+    }
+    if (showTrack === false) {
+        $("#showTrackMode").text("Track history disabled")
+        $("#showTrackButton").removeClass("btn-primary").addClass("btn-outline-danger")
+    }
+}
+
 function updateMap() {
     var pos = L.latLng(latitude, longitude);
 
@@ -113,8 +125,6 @@ function clearPathHistory() {
 
 function drawLine() {
 
-    console.log (pointsDrawn)
-
     if (pointsDrawn == 0) {
         latitude_minus_1 = latitude;
         longitude_minus_1 = longitude;
@@ -131,20 +141,22 @@ function drawLine() {
 
     pointsDrawn = pointsDrawn + 1;
 
-    var polylinePoints = [
-        [latitude_minus_2, longitude_minus_2],
-        [latitude_minus_1, longitude_minus_1]
-    ];   
-      
-    var polylineOptions = {
-        color: 'blue',
-        weight: 6,
-        opacity: 0.9
-      };
+    if (showTrack === true) {
+        var polylinePoints = [
+            [latitude_minus_2, longitude_minus_2],
+            [latitude_minus_1, longitude_minus_1]
+        ];   
+        
+        var polylineOptions = {
+            color: 'blue',
+            weight: 6,
+            opacity: 0.9
+        };
 
-    var polyline = new L.Polyline(polylinePoints, polylineOptions);
+        var polyline = new L.Polyline(polylinePoints, polylineOptions);
 
-    lineLayerGroup.addLayer(polyline);
+        lineLayerGroup.addLayer(polyline);
+    }
 
     latitude_minus_2 = latitude_minus_1;
     longitude_minus_2 = longitude_minus_1;

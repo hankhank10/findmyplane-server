@@ -135,7 +135,7 @@ def api_new_plane():
     db.session.commit()
 
     output_dictionary = {
-        "status": "success"
+        "status": "success",
         "ident_public_key": public_key,
         "ident_private_key": private_key
     }

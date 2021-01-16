@@ -69,7 +69,11 @@
 		<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
 			<ul class="navbar-nav mr-auto">
 				<button id=followModeButton class="btn btn-primary btn-sm" type="button" onclick="toggleFollowPlane()">
-					<i class="fas fa-location-arrow"></i> <span id=followMode>Moving map enabled</span>
+					<i class="fas fa-compass"></i> <span id=followMode>Moving map enabled</span>
+                </button>
+                &nbsp;
+				<button id=showTrackButton class="btn btn-primary btn-sm" type="button" onclick="toggleShowTrack()">
+					<i class="fas fa-location-arrow"></i> <span id=showTrackMode>Track history enabled</span>
                 </button>
 			</ul>
 		</div>
@@ -111,6 +115,7 @@
 <script>
 
     let followPlane = true;
+    let showTrack = true;
     let ident_public_key = '{{ ident_public_key }}';
 
     // Create map options
