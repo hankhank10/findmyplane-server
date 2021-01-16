@@ -70,7 +70,7 @@
 			<ul class="navbar-nav mr-auto">
 				<button id=followModeButton class="btn btn-primary btn-sm" type="button" onclick="toggleFollowPlane()">
 					<i class="fas fa-location-arrow"></i> <span id=followMode>Moving map enabled</span>
-				</button>
+                </button>
 			</ul>
 		</div>
 		<div class="mx-auto order-0">
@@ -97,6 +97,8 @@
             <button type="button" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
             <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Server connection status" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
             <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Sim data status" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
+
         </div>
     </footer>
 
@@ -179,6 +181,10 @@
 
     // Adding marker to the map
     marker.addTo(map);
+
+    // Create lines layer and add to the map
+    var lineLayerGroup = new L.layerGroup();
+    map.addLayer(lineLayerGroup);
 
 </script>
 

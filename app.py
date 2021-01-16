@@ -317,6 +317,22 @@ def show_map(ident_public_key):
     return render_template('map.html', ident_public_key = ident_public_key)
 
 
+@app.route('/beta/<ident_public_key>')
+def beta_show_map(ident_public_key):
+
+    ident_public_key = ident_public_key.upper()
+
+    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
+
+    if bool(plane) == False:
+        flash ("No record of ident "+ ident_public_key)
+        return redirect(url_for('index'))
+
+    stats_handler.increment_stat('map_loads')
+
+    return render_template('map-beta.html', ident_public_key = ident_public_key)
+
+
 @app.route('/latestclient')
 def latest_client_check():
     return "Alpha 0.2"
@@ -330,4 +346,4 @@ def download_link():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8765, debug=False)
+    app.run(host='0.0.0.0', port=8765, debug=True)

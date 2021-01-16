@@ -16,7 +16,6 @@ let lastPlaneTimestamp;
 let disconnectedFromServer = false;
 let pointsDrawn = 0;
 
-
 window.setInterval(function(){
     getSimulatorData();
     updateMap()
@@ -108,6 +107,9 @@ function updateMap() {
     }
 }
 
+function clearPathHistory() {
+    lineLayerGroup.clearLayers();
+}
 
 function drawLine() {
 
@@ -142,7 +144,7 @@ function drawLine() {
 
     var polyline = new L.Polyline(polylinePoints, polylineOptions);
 
-    map.addLayer(polyline);
+    lineLayerGroup.addLayer(polyline);
 
     latitude_minus_2 = latitude_minus_1;
     longitude_minus_2 = longitude_minus_1;
