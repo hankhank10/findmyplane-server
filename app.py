@@ -18,7 +18,6 @@ import stats_handler
 # Define flask variables
 app = Flask(__name__)
 app.secret_key = 'sdfdsagfdggdfsgdfg988'
-#website_url = "http://localhost:5008/"
 
 # DB initialisation
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///findmyplanedb.sqlite'
@@ -96,7 +95,7 @@ def api_dummy_plane():
         current_altitude = 0,
         last_update = datetime.utcnow(),
         title = "Boeing 747",
-        atc_id = "AFC 156",
+        atc_id = "DUM 1",
         ever_received_data = False
     )
     
@@ -136,6 +135,7 @@ def api_new_plane():
     db.session.commit()
 
     output_dictionary = {
+        "status": "success"
         "ident_public_key": public_key,
         "ident_private_key": private_key
     }
@@ -169,13 +169,11 @@ def api_update_location():
     plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
 
-    # Check if it is the first time data has been sent
+    # Check if it is the first time data has been sent, because in that scenario we need to update the plane descriptions at the end of creating the record
     first_time = False
     if plane_to_update.ever_received_data == False:
         plane_to_update.ever_received_data = True
         first_time = True
-
-    #db.session.commit()
 
     # Create waypoint record
     if data_received['ident_public_key'] != "DUMMY":
@@ -190,11 +188,6 @@ def api_update_location():
         db.session.add(new_waypoint)
         
     db.session.commit()
-
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
-    compass = db.Column(db.Integer)
-    altitude = db.Column(db.Integer)
 
     if first_time:
         backend_update_plane_descriptions()
