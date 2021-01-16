@@ -2,3 +2,8 @@
 *.pyc
 *.ini
 .DS_Store
+/.idea
+/.vscode
+/migrations
+findmyplanedb.sqlite
+
