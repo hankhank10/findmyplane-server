@@ -43,11 +43,11 @@ def update_location():
         
         try:
             r = requests.post(website_address+"/api/update_plane_location", json=data_to_send)
+            if r.status_code != 200:
+                server_errors_logged += 1
+                
         except:
             if verbose: print ("Error sending data")
-            server_errors_logged += 1
-
-        if r.status_code != 200:
             server_errors_logged += 1
 
         datapoints_sent += 1
@@ -58,11 +58,14 @@ def update_location():
 
 
 # Settings
-website_address = "https://findmyplane.live"
+website_address = "http://localhost"
+website_port = 8755
+website_address = website_address + ":" + str(website_port)
+
 delay_after_failed_new_plane_request = 3
 delay_between_updates = 2
 verbose = False
-version = "Alpha 0.2"
+version = "Dummy Alpha 0.3"
 
 datapoints_sent = 0
 server_errors_logged = 0
@@ -79,7 +82,7 @@ ident_public_key = "DUMMY"
 ident_private_key = "dummydata"
 
 print ("Connected to server at", website_address)
-print ("Find your plane at:", website_address + "/view/" + ident_public_key)
+print ("Ident public key =", str(ident_public_key))
 print ("Press CTRL-C to exit")
 print ()
 
