@@ -2,7 +2,7 @@ let polylinePoints;
 
 
 $(function() {
-    $('#upload-file-btn').click(function() {
+    $('#browseButton').change(function() {
         var form_data = new FormData($('#upload-file')[0]);
         $.ajax({
             type: 'POST',
@@ -38,5 +38,7 @@ function drawFlightPlan(data) {
     var polyline = new L.Polyline(polylinePoints, polylineOptions);
 
     flightplanLayerGroup.addLayer(polyline);
+
+    temporaryAlert("", "New flight plan uploaded", "success")
 
 }
