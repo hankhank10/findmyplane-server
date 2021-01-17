@@ -90,7 +90,7 @@
         </div>
     </nav>
 
-    <div class="row p-2" style="height: 85vh">
+    <div class="row p-2" style="height: 80vh">
 		<div class="col-sm-12 col-xl-12 no-gutters collapse show p-0" style="background-color: grey;" id="map_column" style="position: relative; height=100%;">
 			<div id = "map" style = "height: 100%; width: 100%;"></div>
 		</div>
@@ -106,12 +106,14 @@
 
 
             <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
-
-            <form id="upload-file" method="post" enctype="multipart/form-data">
+            
+            <br>
+            <form class="form-inline" id="upload-file" method="post" enctype="multipart/form-data">
                 <fieldset>
-                    <label for="file">Select a file</label>
-                    <input id="browseButton" name="file" type="file">
-                    <!--<button id="upload-file-btn" type="button">Upload</button>-->
+                    <label id="labelFlightPlan" class="btn btn-primary btn-sm mt-1" aria-label="Flight plan display status" data-microtip-position="right" role="tooltip">
+                        <span id="spanFlightPlanLabel"><i class="fas fa-route"></i> <i class="fas fa-upload"></i> Upload flight plan in .PLN format</span> <input id="browseButton" name="file" type="file" hidden>
+                    </label>
+                    <!-- <input id="browseButton" name="file" type="file">-->
                 </fieldset>
             </form>
 
@@ -134,7 +136,7 @@
         btnPlaneStatus.style.display = "none";
         followModeButton.style.display = "none";
         showTrackButton.style.display = "none";
-        btnClearPathHistory.display = "none";
+        btnClearPathHistory.style.display = "none";
         btnIdent.display = "none";
     }
 

@@ -222,15 +222,20 @@ def api_view_plane_data(ident_public_key="none"):
 
     output_dictionary['other_planes'] = []
 
-    north = float(request.args.get('north'))
-    south = float(request.args.get('south'))
-    east = float(request.args.get('north'))
-    west = float(request.args.get('west'))
+    north = request.args.get('north')
+    south = request.args.get('south')
+    east = request.args.get('east')
+    west = request.args.get('west')
 
     if north == None: north = 90
     if south == None: south = -90
     if east == None: east = 180
     if west == None: west = -180
+
+    north = float(north)
+    south = float(south)
+    east = float(east)
+    west = float(west)
 
     if north > 90: north = 90
     if south < -90: south = -90

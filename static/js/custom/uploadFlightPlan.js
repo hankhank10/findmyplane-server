@@ -12,7 +12,16 @@ $(function() {
             cache: false,
             processData: false,
             success: function(data) {
-                drawFlightPlan(data);
+                console.log (data.status)
+                if (data.status === "success") {
+                    drawFlightPlan(data.waypoints);
+                }
+                if (data.status != "success") {
+                    temporaryAlert("Uh oh...", "File could not be parsed. Ensure you are uploading a .PLN file.", "error")
+                }
+            },
+            error: function() {
+                temporaryAlert("Uh oh...", "File could not be parsed. Ensure you are uploading a .PLN file.", "error")
             },
         });
     });
@@ -40,5 +49,8 @@ function drawFlightPlan(data) {
     flightplanLayerGroup.addLayer(polyline);
 
     temporaryAlert("", "New flight plan uploaded", "success")
+
+    $('#labelFlightPlan').addClass('btn-success').addClass('btn');
+    $('#spanFlightPlanLabel').html ("<i class='fas fa-route'></i> <i class='fas fa-check'>")
 
 }

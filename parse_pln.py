@@ -91,6 +91,11 @@ def simplify_route(source_dictionary):
         output_dictionary.append(this_waypoint)
         a = a + 1
     
+    output_dictionary = {
+        'status': 'success',
+        'waypoints': output_dictionary
+    }
+
     return output_dictionary
 
 
@@ -117,7 +122,7 @@ def receive_upload(simple = True):
         extension = Path(file.filename).suffix
 
         if extension != ".pln":
-            return "Please upload a .PLN file"
+            return jsonify({'status': 'error'})
 
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], temporary_filename))
 
