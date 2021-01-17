@@ -17,9 +17,13 @@ let disconnectedFromServer = false;
 let pointsDrawn = 0;
 
 window.setInterval(function(){
-    getSimulatorData();
-    updateMap()
-    drawLine()
+    //console.log(showMyPlane);
+    if (showMyPlane === true) {
+        getSimulatorData();
+        updateMap();
+        drawLine();
+    };
+    loadTraffic('flybywire');
 }, 2000);
 
 
@@ -165,6 +169,79 @@ function drawLine() {
     longitude_minus_1 = longitude;
 
 }
+
+
+function loadTraffic(apiToCheck) {
+    var bounds = map.getBounds();
+    west = bounds.getWest();
+    south = bounds.getSouth();
+    east = bounds.getEast();
+    north = bounds.getNorth();
+
+    if (north > 90) {north = 90}
+    if (east > 180) {east = 180}
+    if (south < -90) {south = -90}
+    if (west < -180) {west = -180}
+
+    //console.log ("west=", west)
+    //console.log ("south=", south)
+    //console.log ("east =", east)
+    //console.log ("north =", north)
+    //apiURL = "https://api.flybywiresim.com/txcxn?west=-180&south=-90&east=180&north=90&skip=0&take=100"
+
+
+    $.ajax({
+        type: 'GET',
+        url: 'https://api.flybywiresim.com/txcxn',
+        data: {
+            west: west,
+            south: south,
+            east: east,
+            north: north,
+            skip: 0,
+            take: 100,
+        },
+        contentType: 'application/json; charset=utf-8',
+        cache: false,
+        success: function(data) {
+            
+            flybywireTrafficLayerGroup.clearLayers();
+
+            $('#btnGlobalTraffic').html("Showing " + data.count + " of " + data.total + " in area")
+
+            data.results.forEach(function(otherPlane) {
+                //console.log(otherPlane.location.x, otherPlane.location.y);
+
+                var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
+                otherPlaneMarker.setRotationAngle(otherPlane.heading);
+
+                tooltipText = "<b>" + otherPlane.aircraftType + "</b>"
+
+                if (otherPlane.flight != "") {
+                    tooltipText = tooltipText + " with flight number <b>" + otherPlane.flight + "</b>"
+                }
+
+                if (otherPlane.trueAltitude != "") {
+                    tooltipText = tooltipText + " at <b>" + otherPlane.trueAltitude + "ft </b>"
+                }
+
+                if (otherPlane.origin != "") {
+                    tooltipText = tooltipText + " from <b>" + otherPlane.origin + "</b>"
+                }
+
+                if (otherPlane.destination != "") {
+                    tooltipText = tooltipText + " to <b>" + otherPlane.destination + "</b>"
+                }
+
+                otherPlaneMarker.bindTooltip(tooltipText).openTooltip();
+                otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
+
+            });
+
+        },
+    });
+};
+
 
 
 function temporaryAlert(title, message, icon) {

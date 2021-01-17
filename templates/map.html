@@ -98,7 +98,12 @@
 
     <footer class="footer">
         <div class="container">
+            {% if ident_public_key == "WORLD" %}
+            <button type="button" id="btnGlobalTraffic" class="btn btn-primary btn-sm">Showing global traffic</b></button>
+            {% else %}
             <button type="button" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
+            {% endif %}
+
             <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Server connection status" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
             <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Sim data status" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
             <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
@@ -122,12 +127,23 @@
     let followPlane = true;
     let showTrack = true;
     let ident_public_key = '{{ ident_public_key }}';
+    let showMyPlane = true;
+
+    if (ident_public_key === "WORLD") {
+        showMyPlane = false;
+        btnServerStatus.style.display = "none"
+        btnPlaneStatus.style.display = "none";
+        followModeButton.style.display = "none";
+        showTrackButton.style.display = "none";
+        btnClearPathHistory.display = "none";
+    }
 
     // Create map options
     var mapOptions = {
         center: [41.8601, -87.6101],
         zoom: 10,
         dragging: true,
+        worldCopyJump: true
     }
 
     // Creating a map object
@@ -169,36 +185,58 @@
     L.control.layers(baseLayers, overlays).addTo(map)
 
     // Icon options
-    var iconOptions = {
-        iconUrl: '/static/img/plane.png',
+    var myPlaneIconOptions = {
+        iconUrl: '/static/img/plane-red.png',
+        iconSize: [35, 35]
+    }
+
+    var otherPlaneIconOptions = {
+        iconUrl: '/static/img/plane-grey.png',
         iconSize: [35, 35]
     }
 
     // Creating a custom icon
-    var customIcon = L.icon(iconOptions);
+    var myPlaneIcon = L.icon(myPlaneIconOptions);
+    var otherPlaneIcon = L.icon(otherPlaneIconOptions);
 
     // Creating Marker Options
-    var markerOptions = {
+    var myPlaneMarkerOptions = {
         clickable: false,
         draggable: false,
-        icon: customIcon,
+        icon: myPlaneIcon,
         rotationAngle: 0,
         rotationOrigin: "center"
     }
 
-    // Creating a Marker
-    var marker = L.marker([17.438139, 78.395830], markerOptions);
+    // Creating Marker Options
+    var otherPlaneMarkerOptions = {
+        clickable: true,
+        draggable: false,
+        icon: otherPlaneIcon,
+        rotationAngle: 0,
+        rotationOrigin: "center"
+    }
 
-    // Adding marker to the map
-    marker.addTo(map);
+    if (showMyPlane === true) {
+        // Creating a Marker
+        var marker = L.marker([17.438139, 78.395830], myPlaneMarkerOptions);
 
-    // Create lines layer and add to the map
-    var lineLayerGroup = new L.layerGroup();
-    map.addLayer(lineLayerGroup);
+        // Adding marker to the map
+        marker.addTo(map);
+
+        // Create lines layer and add to the map
+        var lineLayerGroup = new L.layerGroup();
+        map.addLayer(lineLayerGroup);
+    }
 
     // Create route layer and add to the map
     var flightplanLayerGroup = new L.layerGroup();
     map.addLayer(flightplanLayerGroup);
+
+    // Create traffic layers and add to the map
+    // Fly By Wire
+    var flybywireTrafficLayerGroup = new L.layerGroup();
+    map.addLayer(flybywireTrafficLayerGroup);
 
 </script>
 
