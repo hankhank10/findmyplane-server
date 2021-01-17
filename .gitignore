@@ -5,7 +5,7 @@
 /.idea
 /.vscode
 /migrations
-findmyplanedb.sqlite
+*.sqlite
 /uploads
 .vscode/settings.json
 stats.json
