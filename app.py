@@ -205,14 +205,25 @@ def api_view_plane_data(ident_public_key="none"):
 
     output_dictionary = {}
 
+    # Format altitude
+
+
     if request.endpoint == 'my_plane':
         plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
+
+        if plane.current_altitude == None:
+            altitude = 0
+        else:
+            altitude = plane.current_altitude
+            altitude = round(altitude,-3)
+            altitude = '{:.0f}'.format(altitude)
+
         my_plane_dictionary = {
             'ident_public_key': plane.ident_public_key,
             'current_latitude': plane.current_latitude,
             'current_longitude': plane.current_longitude,
             'current_compass': plane.current_compass,
-            'current_altitude': plane.current_altitude,
+            'current_altitude': altitude,
             'last_update': plane.last_update,
             'ever_received_data': plane.ever_received_data,
             'seconds_since_last_update': plane.seconds_since_last_update,
@@ -246,11 +257,19 @@ def api_view_plane_data(ident_public_key="none"):
 
     for traffic_plane in traffic_planes:
         if traffic_plane.is_current and traffic_plane.ever_received_data:
+
+            if traffic_plane.current_altitude == None:
+                altitude = 0
+            else:
+                altitude = traffic_plane.current_altitude
+                altitude = round(altitude,-3)
+                altitude = '{:.0f}'.format(altitude)
+
             other_plane_dictionary = {
                 'ident_public_key': traffic_plane.ident_public_key,
                 'current_latitude': traffic_plane.current_latitude,
                 'current_longitude': traffic_plane.current_longitude,
-                'current_altitude': traffic_plane.current_altitude,
+                'current_altitude': altitude,
                 'current_compass': traffic_plane.current_compass,
                 'title': traffic_plane.title,
                 'atc_id': traffic_plane.atc_id
