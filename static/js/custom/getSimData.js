@@ -118,7 +118,7 @@ function getSimulatorData() {
                     var otherPlaneMarker = L.marker([otherPlane.current_latitude, otherPlane.current_longitude], FMPPlaneMarkerOptions);
                     otherPlaneMarker.setRotationAngle(otherPlane.current_compass);
 
-                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
+                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.ident_public_key, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
                     otherPlaneMarker.addTo(findmyplaneTrafficLayerGroup)
 
                     howManyFMPPlanesDisplayed = howManyFMPPlanesDisplayed + 1
@@ -277,7 +277,7 @@ function loadTraffic(apiToCheck) {
                     var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
                     otherPlaneMarker.setRotationAngle(otherPlane.heading);
 
-                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.aircraftType, otherPlane.flight, otherPlane.trueAltitude, otherPlane.origin, otherPlane.destination, "flybywire")).openTooltip();
+                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.aircraftType, otherPlane.flight, "", otherPlane.trueAltitude, otherPlane.origin, otherPlane.destination, "flybywire")).openTooltip();
                     otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
 
                 });
@@ -289,10 +289,14 @@ function loadTraffic(apiToCheck) {
 };
 
 
-function generatePlaneToolTip(aircraftType, flightNumber, altitude, origin, destination, source) {
+function generatePlaneToolTip(aircraftType, flightNumber, ident, altitude, origin, destination, source) {
 
     tooltipText = "<b>" + aircraftType + "</b>"
-    if (flightNumber != "") {tooltipText = tooltipText + " with flight number <b>" + flightNumber + "</b>"}
+    if (flightNumber != "") {
+        tooltipText = tooltipText + " with flight number <b>" + flightNumber + "</b>";
+        if (ident != "") { tooltipText = tooltipText + " and"}
+    }
+    if (ident != "") {tooltipText = tooltipText + " ident <b>" + ident + "</b>"}
     if (altitude != "") {tooltipText = tooltipText + " at <b>" + altitude + "ft </b>"}
     if (origin != "") {tooltipText = tooltipText + " from <b>" + origin + "</b>"}
     if (destination != "") {tooltipText = tooltipText + " to <b>" + destination + "</b>"}
