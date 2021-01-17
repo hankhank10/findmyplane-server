@@ -293,6 +293,10 @@ def backend_update_plane_descriptions():
     number_of_planes_updated = 0
 
     for plane in planes:
+        if plane.ever_received_data and not plane.is_current:
+            print ("Deleting ", plane.ident_public_key)
+            db.session.delete(plane)
+        
         if plane.is_current and plane.ever_received_data:
             plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
             if plane_location['status'] == "success":
