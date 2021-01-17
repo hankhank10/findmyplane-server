@@ -9,3 +9,4 @@
 /uploads
 .vscode/settings.json
 stats.json
+findmyplanedb.sqlite
