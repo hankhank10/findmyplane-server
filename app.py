@@ -312,6 +312,11 @@ def show_map(ident_public_key):
     return render_template('map.html', ident_public_key = ident_public_key)
 
 
+@app.route('/view_world')
+def show_world_map():
+    return render_template('map.html', ident_public_key = "WORLD")
+
+
 @app.route('/beta/<ident_public_key>')
 def beta_show_map(ident_public_key):
 

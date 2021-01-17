@@ -147,6 +147,7 @@ function drawLine() {
             [latitude_minus_1, longitude_minus_1]
         ];   
         
+        console.log(latitude_minus_2, longitude_minus_2, ">", latitude_minus_1, longitude_minus_1)
         var polylineOptions = {
             color: 'blue',
             weight: 6,
@@ -157,6 +158,11 @@ function drawLine() {
 
         lineLayerGroup.addLayer(polyline);
     }
+
+    latitude_minus_2 = latitude_minus_1;
+    latitude_minus_1 = latitude;
+    longitude_minus_2 = longitude_minus_1;
+    longitude_minus_1 = longitude;
 
 }
 
