@@ -167,7 +167,7 @@
                     <div class="col-lg-8">
                         <div class="section-title">
                             <h2>Ongoing flights right now.</h2>
-                            <p>{{ number_of_current_planes }} flight{% if number_of_current_planes > 1 %}s{% endif %} currently ongoing.</p>
+                            <p>{{ number_of_current_planes }} flight{% if int(number_of_current_planes) > 1 %}s{% endif %} currently ongoing.</p>
                         </div>
                     </div>
                 </div>
