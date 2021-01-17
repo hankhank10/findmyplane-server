@@ -16,13 +16,28 @@ let lastPlaneTimestamp;
 let disconnectedFromServer = false;
 let pointsDrawn = 0;
 
+let showFBWTraffic = true;
+let showFMPTraffic = true;
+
+let bounds;
+let west;
+let south;
+let east;
+let north;
+
 window.setInterval(function(){
     //console.log(showMyPlane);
-    if (showMyPlane === true) {
+    getMapBounds()
+
+    if (showMyPlane === true || showFMPTraffic === true) {
         getSimulatorData();
+    }
+
+    if (showMyPlane === true) {
         updateMap();
         drawLine();
     };
+
     loadTraffic('flybywire');
 }, 2000);
 
@@ -62,26 +77,71 @@ function setPlaneStatus(statusToReport) {
 
 function getSimulatorData() {
 
-    $.getJSON($SCRIPT_ROOT + '/api/plane/' + ident_public_key, {}, function(data) {
+    if (showMyPlane === true) {
+        endpointToCall = '/api/plane/' + ident_public_key
+    }
+    if (showMyPlane === false) {
+        endpointToCall = '/api/planes/'
+    }
 
-        //Navigation
-        altitude = data.my_plane.current_altitude;
-        compass = data.my_plane.current_compass;
-        latitude = data.my_plane.current_latitude;
-        longitude = data.my_plane.current_longitude;
-        lastPlaneTimestamp = data.my_plane.last_update;
-        secondsSinceLastPlaneTimestamp = data.my_plane.seconds_since_last_update;
+    $.ajax({
+        type: 'GET',
+        url: $SCRIPT_ROOT + endpointToCall,
+        data: {
+            west: west,
+            south: south,
+            east: east,
+            north: north,
+        },
+        contentType: 'application/json; charset=utf-8',
+        cache: false,
+        success: function(data) {
+            //Navigation
+            if (showMyPlane === true) {
+                altitude = data.my_plane.current_altitude;
+                compass = data.my_plane.current_compass;
+                latitude = data.my_plane.current_latitude;
+                longitude = data.my_plane.current_longitude;
+                lastPlaneTimestamp = data.my_plane.last_update;
+                secondsSinceLastPlaneTimestamp = data.my_plane.seconds_since_last_update;
+            }
 
-    })
-    .done(function() { setConnectionStatus('connected')})
-    .fail(function() { 
-        setConnectionStatus('error');
+            if (showFMPTraffic) {
+                findmyplaneTrafficLayerGroup.clearLayers();
+
+                howManyFMPPlanesDisplayed = 0
+
+                data.other_planes.forEach(function(otherPlane) {
+
+                    //console.log(otherPlane)
+                    //console.log(otherPlane.current_latitude)
+                    var otherPlaneMarker = L.marker([otherPlane.current_latitude, otherPlane.current_longitude], FMPPlaneMarkerOptions);
+                    otherPlaneMarker.setRotationAngle(otherPlane.current_compass);
+
+                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
+                    otherPlaneMarker.addTo(findmyplaneTrafficLayerGroup)
+
+                    howManyFMPPlanesDisplayed = howManyFMPPlanesDisplayed + 1
+                });
+
+                fmpTrafficStatusMessage = "<i class='fas fa-traffic-light'></i> "+ howManyFMPPlanesDisplayed + " Find My Plane planes in range"
+                $('#btnFMPTraffic').html(fmpTrafficStatusMessage)
+                $('#btnFMPTraffic').removeClass("btn-warning").addClass("btn-success")
+            }
+
+            setConnectionStatus('connected');
+        },
+        error: function(){
+            setConnectionStatus('error');
+        }
     });
 
-    if (secondsSinceLastPlaneTimestamp < 15 && disconnectedFromServer != true) {
-        setPlaneStatus('recent');
-    } else {
-        setPlaneStatus('old')
+    if (showMyPlane === true) {
+        if (secondsSinceLastPlaneTimestamp < 15 && disconnectedFromServer != true) {
+            setPlaneStatus('recent');
+        } else {
+            setPlaneStatus('old')
+        }
     }
 
 }
@@ -151,7 +211,7 @@ function drawLine() {
             [latitude_minus_1, longitude_minus_1]
         ];   
         
-        console.log(latitude_minus_2, longitude_minus_2, ">", latitude_minus_1, longitude_minus_1)
+        //console.log(latitude_minus_2, longitude_minus_2, ">", latitude_minus_1, longitude_minus_1)
         var polylineOptions = {
             color: 'red',
             weight: 6,
@@ -170,8 +230,7 @@ function drawLine() {
 
 }
 
-
-function loadTraffic(apiToCheck) {
+function getMapBounds() {
     var bounds = map.getBounds();
     west = bounds.getWest();
     south = bounds.getSouth();
@@ -182,74 +241,66 @@ function loadTraffic(apiToCheck) {
     if (east > 180) {east = 180}
     if (south < -90) {south = -90}
     if (west < -180) {west = -180}
+}
 
-    //console.log ("west=", west)
-    //console.log ("south=", south)
-    //console.log ("east =", east)
-    //console.log ("north =", north)
-    //apiURL = "https://api.flybywiresim.com/txcxn?west=-180&south=-90&east=180&north=90&skip=0&take=100"
+function loadTraffic(apiToCheck) {
 
+    if (showFBWTraffic === true) {
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.flybywiresim.com/txcxn',
+            data: {
+                west: west,
+                south: south,
+                east: east,
+                north: north,
+                skip: 0,
+                take: 100,
+            },
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function(data) {
+                
+                flybywireTrafficLayerGroup.clearLayers();
 
-    $.ajax({
-        type: 'GET',
-        url: 'https://api.flybywiresim.com/txcxn',
-        data: {
-            west: west,
-            south: south,
-            east: east,
-            north: north,
-            skip: 0,
-            take: 100,
-        },
-        contentType: 'application/json; charset=utf-8',
-        cache: false,
-        success: function(data) {
-            
-            flybywireTrafficLayerGroup.clearLayers();
-
-            trafficStatusMessage = "<i class='fas fa-traffic-light'></i> " + data.count
-            if (data.total > data.count) {
-                trafficStatusMessage = trafficStatusMessage + " of " + data.total
-            }
-            trafficStatusMessage = trafficStatusMessage + " local planes shown"
-
-            $('#btnGlobalTraffic').html(trafficStatusMessage)
-            $('#btnGlobalTraffic').removeClass("btn-warning").addClass("btn-success")
-
-            data.results.forEach(function(otherPlane) {
-
-                var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
-                otherPlaneMarker.setRotationAngle(otherPlane.heading);
-
-                tooltipText = "<b>" + otherPlane.aircraftType + "</b>"
-
-                if (otherPlane.flight != "") {
-                    tooltipText = tooltipText + " with flight number <b>" + otherPlane.flight + "</b>"
+                fbwTrafficStatusMessage = "<i class='fas fa-traffic-light'></i> " + data.count
+                if (data.total > data.count) {
+                    fbwTrafficStatusMessage = fbwTrafficStatusMessage + " of " + data.total
                 }
+                fbwTrafficStatusMessage = fbwTrafficStatusMessage + " FBW planes in range"
 
-                if (otherPlane.trueAltitude != "") {
-                    tooltipText = tooltipText + " at <b>" + otherPlane.trueAltitude + "ft </b>"
-                }
+                $('#btnFBWTraffic').html(fbwTrafficStatusMessage)
+                $('#btnFBWTraffic').removeClass("btn-warning").addClass("btn-success")
 
-                if (otherPlane.origin != "") {
-                    tooltipText = tooltipText + " from <b>" + otherPlane.origin + "</b>"
-                }
+                data.results.forEach(function(otherPlane) {
 
-                if (otherPlane.destination != "") {
-                    tooltipText = tooltipText + " to <b>" + otherPlane.destination + "</b>"
-                }
+                    var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
+                    otherPlaneMarker.setRotationAngle(otherPlane.heading);
 
-                tooltipText = tooltipText + "<br><i>(source: Fly-By-Wire)</i>"
+                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.aircraftType, otherPlane.flight, otherPlane.trueAltitude, otherPlane.origin, otherPlane.destination, "flybywire")).openTooltip();
+                    otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
 
-                otherPlaneMarker.bindTooltip(tooltipText).openTooltip();
-                otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
+                });
 
-            });
+            },
+        });
+    }
 
-        },
-    });
 };
 
+
+function generatePlaneToolTip(aircraftType, flightNumber, altitude, origin, destination, source) {
+
+    tooltipText = "<b>" + aircraftType + "</b>"
+    if (flightNumber != "") {tooltipText = tooltipText + " with flight number <b>" + flightNumber + "</b>"}
+    if (altitude != "") {tooltipText = tooltipText + " at <b>" + altitude + "ft </b>"}
+    if (origin != "") {tooltipText = tooltipText + " from <b>" + origin + "</b>"}
+    if (destination != "") {tooltipText = tooltipText + " to <b>" + destination + "</b>"}
+    if (source === "flybywire") {tooltipText = tooltipText + "<br><i>(source: Fly-By-Wire)</i>"}
+    if (source === "findmyplane") {tooltipText = tooltipText + "<br><i>(source: Find My Plane)</i>"}
+
+    return tooltipText
+}
 
 
 function temporaryAlert(title, message, icon) {

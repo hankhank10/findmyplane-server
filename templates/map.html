@@ -101,7 +101,9 @@
             <button type="button" id="btnIdent" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
             <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Connection to findmyplane server" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
             <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Receiving data from your plane" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
-            <button type="button" id="btnGlobalTraffic" class="btn btn-warning btn-sm" aria-label="Displaying other flights near you - capped at 100 displayed" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading global traffic <i class="fas fa-sync fa-spin"></i></b></button>
+            <button type="button" id="btnFBWTraffic" class="btn btn-warning btn-sm" aria-label="Traffic from fly-by-wire (capped at 100)" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Fly By Wire traffic <i class="fas fa-sync fa-spin"></i></b></button>
+            <button type="button" id="btnFMPTraffic" class="btn btn-warning btn-sm" aria-label="Traffic from FindMyPlane.live" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Find My Plane traffic <i class="fas fa-sync fa-spin"></i></b></button>
+
 
             <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
 
@@ -194,8 +196,10 @@
     }
 
     // Creating a custom icon
-    var myPlaneIcon = L.icon(myPlaneIconOptions);
-    var otherPlaneIcon = L.icon(otherPlaneIconOptions);
+    var myPlaneIcon = L.icon({iconUrl: '/static/img/plane-red.png',iconSize: [35, 35]});
+    var fmpPlaneIcon = L.icon({iconUrl: '/static/img/plane-blue.png',iconSize: [35, 35]});
+    var otherPlaneIcon = L.icon({iconUrl: '/static/img/plane-grey.png', iconSize: [35, 35]});
+
 
     // Creating Marker Options
     var myPlaneMarkerOptions = {
@@ -206,7 +210,14 @@
         rotationOrigin: "center"
     }
 
-    // Creating Marker Options
+    var FMPPlaneMarkerOptions = {
+        clickable: true,
+        draggable: false,
+        icon: fmpPlaneIcon,
+        rotationAngle: 0,
+        rotationOrigin: "center"
+    }
+
     var otherPlaneMarkerOptions = {
         clickable: true,
         draggable: false,
@@ -214,6 +225,7 @@
         rotationAngle: 0,
         rotationOrigin: "center"
     }
+
 
     if (showMyPlane === true) {
         // Creating a Marker
@@ -236,8 +248,10 @@
     var flybywireTrafficLayerGroup = new L.layerGroup();
     map.addLayer(flybywireTrafficLayerGroup);
 
-</script>
+    var findmyplaneTrafficLayerGroup = new L.layerGroup();
+    map.addLayer(findmyplaneTrafficLayerGroup)
 
+</script>
 
 <script src="/static/js/custom/uploadFlightPlan.js"></script>
 

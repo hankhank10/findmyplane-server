@@ -199,28 +199,59 @@ def api_update_location():
     return "ok"
 
 
-@app.route ('/api/plane/<ident_public_key>')
-def api_view_plane_data(ident_public_key):
-    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
-
-    my_plane_dictionary = {
-        'ident_public_key': plane.ident_public_key,
-        'current_latitude': plane.current_latitude,
-        'current_longitude': plane.current_longitude,
-        'current_compass': plane.current_compass,
-        'current_altitude': plane.current_altitude,
-        'last_update': plane.last_update,
-        'ever_received_data': plane.ever_received_data,
-        'seconds_since_last_update': plane.seconds_since_last_update,
-        'minutes_since_last_update': plane.seconds_since_last_update / 60
-    }
+@app.route ('/api/plane/<ident_public_key>', endpoint='my_plane')
+@app.route ('/api/planes/', endpoint='all_planes')
+def api_view_plane_data(ident_public_key="none"):
 
     output_dictionary = {}
-    output_dictionary['my_plane'] = my_plane_dictionary
 
-    if request.args.get('traffic') != None:
-        print ("Traffic requested")
+    if request.endpoint == 'my_plane':
+        plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
+        my_plane_dictionary = {
+            'ident_public_key': plane.ident_public_key,
+            'current_latitude': plane.current_latitude,
+            'current_longitude': plane.current_longitude,
+            'current_compass': plane.current_compass,
+            'current_altitude': plane.current_altitude,
+            'last_update': plane.last_update,
+            'ever_received_data': plane.ever_received_data,
+            'seconds_since_last_update': plane.seconds_since_last_update,
+            'minutes_since_last_update': plane.seconds_since_last_update / 60
+        }
+        output_dictionary['my_plane'] = my_plane_dictionary
 
+    output_dictionary['other_planes'] = []
+
+    north = float(request.args.get('north'))
+    south = float(request.args.get('south'))
+    east = float(request.args.get('north'))
+    west = float(request.args.get('west'))
+
+    if north == None: north = 90
+    if south == None: south = -90
+    if east == None: east = 180
+    if west == None: west = -180
+
+    if north > 90: north = 90
+    if south < -90: south = -90
+    if east > 180: east = 180
+    if west < -180: west = -180
+
+    traffic_planes = Plane.query.filter(Plane.ident_public_key != ident_public_key, Plane.current_latitude > south, Plane.current_latitude < north, Plane.current_longitude > west, Plane.current_longitude < east).all()
+
+    for traffic_plane in traffic_planes:
+        if traffic_plane.is_current and traffic_plane.ever_received_data:
+            other_plane_dictionary = {
+                'ident_public_key': traffic_plane.ident_public_key,
+                'current_latitude': traffic_plane.current_latitude,
+                'current_longitude': traffic_plane.current_longitude,
+                'current_altitude': traffic_plane.current_altitude,
+                'current_compass': traffic_plane.current_compass,
+                'title': traffic_plane.title,
+                'atc_id': traffic_plane.atc_id
+            }
+            output_dictionary['other_planes'].append(other_plane_dictionary)
+    
     return jsonify(output_dictionary)
 
 
