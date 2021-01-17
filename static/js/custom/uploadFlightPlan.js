@@ -30,7 +30,7 @@ function drawFlightPlan(data) {
     });
     
     var polylineOptions = {
-        color: 'red',
+        color: 'blue',
         weight: 6,
         opacity: 0.9
     };

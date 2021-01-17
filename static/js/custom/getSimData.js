@@ -31,7 +31,7 @@ function setConnectionStatus(statusToReport) {
 
     if (statusToReport == "connected") {
         $('#btnServerStatus').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
-        $('#btnServerStatus').html('<i class="fas fa-server"></i> Connected');
+        $('#btnServerStatus').html('<i class="fas fa-server"></i> <i class="fas fa-check"></i>');
         lastConnectionTime = Date.now()/1000;
         $('#lastDataTime').html("")
         disconnectedFromServer = false;
@@ -49,7 +49,7 @@ function setPlaneStatus(statusToReport) {
 
     if (statusToReport == "recent") {
         $('#btnPlaneStatus').removeClass('btn-danger').removeClass('btn-warning').addClass('btn-success');
-        $('#btnPlaneStatus').html('<i class="fas fa-plane"></i> Live');        
+        $('#btnPlaneStatus').html('<i class="fas fa-plane"></i> <i class="fas fa-check"></i>');        
     }
 
     if (statusToReport == "old") {
@@ -65,12 +65,12 @@ function getSimulatorData() {
     $.getJSON($SCRIPT_ROOT + '/api/plane/' + ident_public_key, {}, function(data) {
 
         //Navigation
-        altitude = data.current_altitude;
-        compass = data.current_compass;
-        latitude = data.current_latitude;
-        longitude = data.current_longitude;
-        lastPlaneTimestamp = data.last_update;
-        secondsSinceLastPlaneTimestamp = data.seconds_since_last_update;
+        altitude = data.my_plane.current_altitude;
+        compass = data.my_plane.current_compass;
+        latitude = data.my_plane.current_latitude;
+        longitude = data.my_plane.current_longitude;
+        lastPlaneTimestamp = data.my_plane.last_update;
+        secondsSinceLastPlaneTimestamp = data.my_plane.seconds_since_last_update;
 
     })
     .done(function() { setConnectionStatus('connected')})
@@ -153,7 +153,7 @@ function drawLine() {
         
         console.log(latitude_minus_2, longitude_minus_2, ">", latitude_minus_1, longitude_minus_1)
         var polylineOptions = {
-            color: 'blue',
+            color: 'red',
             weight: 6,
             opacity: 0.9
         };
@@ -207,10 +207,16 @@ function loadTraffic(apiToCheck) {
             
             flybywireTrafficLayerGroup.clearLayers();
 
-            $('#btnGlobalTraffic').html("Showing " + data.count + " of " + data.total + " in area")
+            trafficStatusMessage = "<i class='fas fa-traffic-light'></i> " + data.count
+            if (data.total > data.count) {
+                trafficStatusMessage = trafficStatusMessage + " of " + data.total
+            }
+            trafficStatusMessage = trafficStatusMessage + " local planes shown"
+
+            $('#btnGlobalTraffic').html(trafficStatusMessage)
+            $('#btnGlobalTraffic').removeClass("btn-warning").addClass("btn-success")
 
             data.results.forEach(function(otherPlane) {
-                //console.log(otherPlane.location.x, otherPlane.location.y);
 
                 var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
                 otherPlaneMarker.setRotationAngle(otherPlane.heading);
@@ -232,6 +238,8 @@ function loadTraffic(apiToCheck) {
                 if (otherPlane.destination != "") {
                     tooltipText = tooltipText + " to <b>" + otherPlane.destination + "</b>"
                 }
+
+                tooltipText = tooltipText + "<br><i>(source: Fly-By-Wire)</i>"
 
                 otherPlaneMarker.bindTooltip(tooltipText).openTooltip();
                 otherPlaneMarker.addTo(flybywireTrafficLayerGroup)

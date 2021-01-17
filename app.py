@@ -203,7 +203,7 @@ def api_update_location():
 def api_view_plane_data(ident_public_key):
     plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
 
-    output_dictionary = {
+    my_plane_dictionary = {
         'ident_public_key': plane.ident_public_key,
         'current_latitude': plane.current_latitude,
         'current_longitude': plane.current_longitude,
@@ -214,6 +214,12 @@ def api_view_plane_data(ident_public_key):
         'seconds_since_last_update': plane.seconds_since_last_update,
         'minutes_since_last_update': plane.seconds_since_last_update / 60
     }
+
+    output_dictionary = {}
+    output_dictionary['my_plane'] = my_plane_dictionary
+
+    if request.args.get('traffic') != None:
+        print ("Traffic requested")
 
     return jsonify(output_dictionary)
 
@@ -315,7 +321,6 @@ def show_map(ident_public_key):
 @app.route('/view_world')
 def show_world_map():
     return render_template('map.html', ident_public_key = "WORLD")
-
 
 @app.route('/beta/<ident_public_key>')
 def beta_show_map(ident_public_key):

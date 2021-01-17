@@ -98,14 +98,11 @@
 
     <footer class="footer">
         <div class="container">
-            {% if ident_public_key == "WORLD" %}
-            <button type="button" id="btnGlobalTraffic" class="btn btn-primary btn-sm">Showing global traffic</b></button>
-            {% else %}
-            <button type="button" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
-            {% endif %}
+            <button type="button" id="btnIdent" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
+            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Connection to findmyplane server" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Receiving data from your plane" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnGlobalTraffic" class="btn btn-warning btn-sm" aria-label="Displaying other flights near you - capped at 100 displayed" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading global traffic <i class="fas fa-sync fa-spin"></i></b></button>
 
-            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Server connection status" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
-            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Sim data status" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
             <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
 
             <form id="upload-file" method="post" enctype="multipart/form-data">
@@ -136,6 +133,7 @@
         followModeButton.style.display = "none";
         showTrackButton.style.display = "none";
         btnClearPathHistory.display = "none";
+        btnIdent.display = "none";
     }
 
     // Create map options
