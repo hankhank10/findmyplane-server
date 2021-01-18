@@ -10,3 +10,5 @@
 .vscode/settings.json
 stats.json
 findmyplanedb.sqlite
+migrations/versions/115b8d413c1b_.py
+migrations/versions/216fa45ddc99_.py

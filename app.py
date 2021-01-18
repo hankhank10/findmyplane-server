@@ -260,7 +260,9 @@ def api_view_plane_data(ident_public_key="none"):
             'last_update': plane.last_update,
             'ever_received_data': plane.ever_received_data,
             'seconds_since_last_update': plane.seconds_since_last_update,
-            'minutes_since_last_update': plane.seconds_since_last_update / 60
+            'minutes_since_last_update': plane.seconds_since_last_update / 60,
+            'latitude_difference': latitude_difference,
+            'longitude_difference': longitude_difference
         }
         output_dictionary['my_plane'] = my_plane_dictionary
 
