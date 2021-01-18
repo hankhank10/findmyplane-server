@@ -97,39 +97,48 @@ function getSimulatorData() {
         cache: false,
         success: function(data) {
             //Navigation
-            if (showMyPlane === true) {
-                altitude = data.my_plane.current_altitude;
-                compass = data.my_plane.current_compass;
-                latitude = data.my_plane.current_latitude;
-                longitude = data.my_plane.current_longitude;
-                lastPlaneTimestamp = data.my_plane.last_update;
-                secondsSinceLastPlaneTimestamp = data.my_plane.seconds_since_last_update;
+            
+            if (data.status === "success") {
+            
+                if (showMyPlane === true) {
+                    altitude = data.my_plane.current_altitude;
+                    compass = data.my_plane.current_compass;
+                    latitude = data.my_plane.current_latitude;
+                    longitude = data.my_plane.current_longitude;
+                    lastPlaneTimestamp = data.my_plane.last_update;
+                    secondsSinceLastPlaneTimestamp = data.my_plane.seconds_since_last_update;
+                }
+
+                if (showFMPTraffic) {
+                    findmyplaneTrafficLayerGroup.clearLayers();
+
+                    howManyFMPPlanesDisplayed = 0
+
+                    data.other_planes.forEach(function(otherPlane) {
+
+                        //console.log(otherPlane)
+                        //console.log(otherPlane.current_latitude)
+                        var otherPlaneMarker = L.marker([otherPlane.current_latitude, otherPlane.current_longitude], FMPPlaneMarkerOptions);
+                        otherPlaneMarker.setRotationAngle(otherPlane.current_compass);
+
+                        otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.ident_public_key, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
+                        otherPlaneMarker.addTo(findmyplaneTrafficLayerGroup)
+
+                        howManyFMPPlanesDisplayed = howManyFMPPlanesDisplayed + 1
+                    });
+
+                    fmpTrafficStatusMessage = "<i class='fas fa-traffic-light'></i> "+ howManyFMPPlanesDisplayed + " Find My Plane planes in range"
+                    $('#btnFMPTraffic').html(fmpTrafficStatusMessage)
+                    $('#btnFMPTraffic').removeClass("btn-warning").addClass("btn-success")
+                }
+
+                setConnectionStatus('connected');
             }
-
-            if (showFMPTraffic) {
-                findmyplaneTrafficLayerGroup.clearLayers();
-
-                howManyFMPPlanesDisplayed = 0
-
-                data.other_planes.forEach(function(otherPlane) {
-
-                    //console.log(otherPlane)
-                    //console.log(otherPlane.current_latitude)
-                    var otherPlaneMarker = L.marker([otherPlane.current_latitude, otherPlane.current_longitude], FMPPlaneMarkerOptions);
-                    otherPlaneMarker.setRotationAngle(otherPlane.current_compass);
-
-                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.ident_public_key, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
-                    otherPlaneMarker.addTo(findmyplaneTrafficLayerGroup)
-
-                    howManyFMPPlanesDisplayed = howManyFMPPlanesDisplayed + 1
-                });
-
-                fmpTrafficStatusMessage = "<i class='fas fa-traffic-light'></i> "+ howManyFMPPlanesDisplayed + " Find My Plane planes in range"
-                $('#btnFMPTraffic').html(fmpTrafficStatusMessage)
-                $('#btnFMPTraffic').removeClass("btn-warning").addClass("btn-success")
+            
+            if (data.status === "error") {
+                console.log (data.error_reason)
+                setConnectionStatus('error')
             }
-
-            setConnectionStatus('connected');
         },
         error: function(){
             setConnectionStatus('error');

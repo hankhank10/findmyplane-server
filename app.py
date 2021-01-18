@@ -11,6 +11,8 @@ from flask_migrate import Migrate
 
 from datetime import datetime
 
+from sqlalchemy.sql.expression import false
+
 import nearby_city_api
 import stats_handler
 
@@ -40,12 +42,14 @@ class Plane(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ident_public_key = db.Column(db.String(6))
     ident_private_key = db.Column(db.String)
-    current_latitude = db.Column(db.Float)
-    current_longitude = db.Column(db.Float)
+    current_latitude = db.Column(db.Float, default=0)
+    current_longitude = db.Column(db.Float, default=0)
+    previous_latitude = db.Column(db.Float, default=0)
+    previous_longitude = db.Column(db.Float, default=0)
     current_compass = db.Column(db.Integer, default=0)
     current_altitude = db.Column(db.Integer, default=0)
     last_update = db.Column(db.DateTime, default=0)
-    ever_received_data = db.Column(db.Boolean)
+    ever_received_data = db.Column(db.Boolean, default=false)
     title = db.Column(db.String)
     atc_id = db.Column(db.String)
     description_of_location = db.Column(db.String)
@@ -98,6 +102,8 @@ def api_dummy_plane():
         ident_private_key = "dummydata",
         current_latitude = 0,
         current_longitude = 0,
+        previous_latitude = 0,
+        previous_longitude = 0,
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
@@ -130,6 +136,8 @@ def api_new_plane():
         ident_private_key = private_key,
         current_latitude = 0,
         current_longitude = 0,
+        previous_latitude = 0,
+        previous_longitude = 0,
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
@@ -157,11 +165,14 @@ def api_update_location():
 
     data_received = request.json
 
-    if data_received['current_latitude'] == 0 and data_received['current_longitude'] == 0:
+    if data_received['current_latitude'] == 0 or data_received['current_longitude'] == 0:
         return "ignoring as null island"
 
     # Update plane information
     plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'].upper(), ident_private_key = data_received['ident_private_key']).first_or_404()
+
+    plane_to_update.previous_latitude = plane_to_update.current_latitude
+    plane_to_update.previous_longitude = plane_to_update.current_longitude
 
     current_compass = data_received['current_compass']
     if current_compass == None:
@@ -208,7 +219,7 @@ def api_update_location():
 @app.route ('/api/planes/', endpoint='all_planes')
 def api_view_plane_data(ident_public_key="none"):
 
-    output_dictionary = {}
+    output_dictionary = {'status': 'success'}
 
     # Format altitude
 
@@ -222,6 +233,23 @@ def api_view_plane_data(ident_public_key="none"):
             altitude = plane.current_altitude
             altitude = round(altitude,-3)
             altitude = '{:.0f}'.format(altitude)
+
+        latitude_difference = abs(plane.current_latitude) - abs(plane.previous_latitude)
+        longitude_difference = abs(plane.current_longitude) - abs(plane.previous_longitude)
+        if latitude_difference > 1 or longitude_difference > 1:
+            return jsonify({
+                'status': 'error',
+                'error_reason': 'too big a jump in lat or lon detected',
+                'debug_data': {
+                    'current_latitude': plane.current_latitude,
+                    'current_longitude': plane.current_longitude,
+                    'previous_latitude': plane.previous_latitude,
+                    'previous_longitude': plane.previous_longitude,
+                    'latitude_difference': latitude_difference,
+                    'longitude_difference': longitude_difference
+                }
+            })
+            
 
         my_plane_dictionary = {
             'ident_public_key': plane.ident_public_key,
