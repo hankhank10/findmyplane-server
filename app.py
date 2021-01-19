@@ -335,7 +335,7 @@ def backend_update_plane_descriptions():
             plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
             if plane_location['status'] == "success":
                 
-                if plane.latitude < 0.02 and plane.longitude < 0.02:
+                if plane.current_latitude < 0.02 and plane.current_longitude < 0.02:
                     plane.full_plane_description = plane.title + " at null island somewhere off Ghana"
                 else:
                     description_of_location = plane_location['text_expression']
