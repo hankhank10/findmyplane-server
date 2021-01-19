@@ -177,7 +177,9 @@
                                 <div class="single-slide">
                                     <div class="testimonial-content">
                                         <p align="center">
-                                            <i class="fas fa-globe fa-3x"></i>
+                                            <a href="{{ url_for('show_world_map') }}" class="text-decoration-none">
+                                                <i class="fas fa-globe fa-3x"></i>
+                                            </a>
                                         </p>
                                         <p align="center" class="text-decoration-none">
                                             <a href="{{ url_for('show_world_map') }}" class="text-decoration-none">
@@ -192,7 +194,9 @@
                                 <div class="single-slide">
                                     <div class="testimonial-content">
                                         <p align="center">
-                                            <i class="fas fa-plane fa-3x" data-fa-transform="rotate-{{ row.current_compass_less_90 }}"></i>
+                                            <a href="{{ url_for('show_map', ident_public_key = row.ident_public_key) }}" class="text-decoration-none">
+                                                <i class="fas fa-plane fa-3x" data-fa-transform="rotate-{{ row.current_compass_less_90 }}"></i>
+                                            </a>
                                         </p>
                                         <p align="center" class="text-decoration-none">
                                             <a href="{{ url_for('show_map', ident_public_key = row.ident_public_key) }}" class="text-decoration-none">
