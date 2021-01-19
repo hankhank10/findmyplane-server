@@ -446,10 +446,11 @@ def latest_client_check():
 
 
 @app.route('/download/findmyplane-client.zip')
+@app.route('/download/')
 def download_link():
     stats_handler.increment_stat('downloads')
 
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/a0.2/findmyplane-client.zip')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.5/findmyplane-client-05s.zip')
 
 
 # All of thse are parsing PLN endpoints
