@@ -248,6 +248,26 @@ def api_view_plane_data(ident_public_key="none"):
             altitude = round(altitude,-3)
             altitude = '{:.0f}'.format(altitude)
 
+        if plane.current_latitude == None or plane.current_longitude == None:
+            return jsonify({
+                'status': 'error',
+                'error_reason': 'current lat or lon is None',
+                'debug_data': {
+                    'current_latitude': plane.current_latitude,
+                    'current_longitude': plane.current_longitude,
+                    'previous_latitude': plane.previous_latitude,
+                    'previous_longitude': plane.previous_longitude,
+                    'latitude_difference': latitude_difference,
+                    'longitude_difference': longitude_difference
+                }
+            }) 
+
+        if plane.previous_latitude == None:
+            plane.previous_latitude = 0
+        if plane.previous_longitude == None:
+            plane.previous_longitude = 0
+        db.session.commit()
+
         latitude_difference = abs(plane.current_latitude) - abs(plane.previous_latitude)
         longitude_difference = abs(plane.current_longitude) - abs(plane.previous_longitude)
         if latitude_difference > 1 or longitude_difference > 1:
@@ -342,30 +362,32 @@ def backend_update_plane_descriptions():
             db.session.delete(plane)
         
         if plane.is_current and plane.ever_received_data:
-            plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
-            if plane_location['status'] == "success":
-                
-                if plane.current_latitude < 0.02 and plane.current_longitude < 0.02:
-                    plane.full_plane_description = plane.title + " at null island somewhere off Ghana"
-                else:
-                    description_of_location = plane_location['text_expression']
-                    plane.description_of_location = description_of_location
-
-                    # Format altitude
-                    altitude = plane.current_altitude
-                    altitude = round(altitude,-3)
-                    altitude = '{:.0f}'.format(altitude)
-
-                    if plane.current_altitude != None:
-                        plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+            if plane.current_latitude or plane.current_longitude != None:
+            
+                plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
+                if plane_location['status'] == "success":
+                    
+                    if plane.current_latitude < 0.02 and plane.current_longitude < 0.02:
+                        plane.full_plane_description = plane.title + " at null island somewhere off Ghana"
                     else:
-                        plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
+                        description_of_location = plane_location['text_expression']
+                        plane.description_of_location = description_of_location
 
-                number_of_planes_updated += 1
-                #print (plane.ident_public_key, plane.full_plane_description)
-            else:
-                #print ("City API status", plane_location['status'])
-                pass
+                        # Format altitude
+                        altitude = plane.current_altitude
+                        altitude = round(altitude,-3)
+                        altitude = '{:.0f}'.format(altitude)
+
+                        if plane.current_altitude != None:
+                            plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                        else:
+                            plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
+
+                    number_of_planes_updated += 1
+                    #print (plane.ident_public_key, plane.full_plane_description)
+                else:
+                    #print ("City API status", plane_location['status'])
+                    pass
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
