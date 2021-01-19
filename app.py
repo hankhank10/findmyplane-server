@@ -454,7 +454,11 @@ def show_map(ident_public_key):
 
     if source == "flybywire":
         r = requests.get('https://api.flybywiresim.com/txcxn/_find', {'flight': ident_public_key})
-        if r.json() == []: 
+
+        json_output = r.json()
+        print (json_output[0]['flight'])
+
+        if json_output == [] or json_output[0]['flight'] != ident_public_key: 
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 
