@@ -253,12 +253,11 @@ def api_view_plane_data(ident_public_key="none"):
                 'status': 'error',
                 'error_reason': 'current lat or lon is None',
                 'debug_data': {
+                    'ident_public_key': plane.ident_public_key,
                     'current_latitude': plane.current_latitude,
                     'current_longitude': plane.current_longitude,
                     'previous_latitude': plane.previous_latitude,
-                    'previous_longitude': plane.previous_longitude,
-                    'latitude_difference': latitude_difference,
-                    'longitude_difference': longitude_difference
+                    'previous_longitude': plane.previous_longitude
                 }
             }) 
 
@@ -275,6 +274,7 @@ def api_view_plane_data(ident_public_key="none"):
                 'status': 'error',
                 'error_reason': 'too big a jump in lat or lon detected',
                 'debug_data': {
+                    'ident_public_key': plane.ident_public_key,
                     'current_latitude': plane.current_latitude,
                     'current_longitude': plane.current_longitude,
                     'previous_latitude': plane.previous_latitude,
@@ -284,7 +284,6 @@ def api_view_plane_data(ident_public_key="none"):
                 }
             })
             
-
         my_plane_dictionary = {
             'ident_public_key': plane.ident_public_key,
             'current_latitude': plane.current_latitude,
