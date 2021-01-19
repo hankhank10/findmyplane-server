@@ -129,6 +129,7 @@
     let showTrack = true;
     let ident_public_key = '{{ ident_public_key }}';
     let showMyPlane = true;
+    let source = '{{ source }}';
 
     zoom_level = 10
 
@@ -206,7 +207,6 @@
     var fmpPlaneIcon = L.icon({iconUrl: '/static/img/plane-blue.png',iconSize: [35, 35]});
     var otherPlaneIcon = L.icon({iconUrl: '/static/img/plane-grey.png', iconSize: [35, 35]});
 
-
     // Creating Marker Options
     var myPlaneMarkerOptions = {
         clickable: false,
@@ -231,7 +231,6 @@
         rotationAngle: 0,
         rotationOrigin: "center"
     }
-
 
     if (showMyPlane === true) {
         // Creating a Marker

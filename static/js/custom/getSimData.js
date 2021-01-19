@@ -25,6 +25,7 @@ let south;
 let east;
 let north;
 
+
 window.setInterval(function(){
     //console.log(showMyPlane);
     getMapBounds()
@@ -77,13 +78,20 @@ function setPlaneStatus(statusToReport) {
 
 function getSimulatorData() {
 
-    if (showMyPlane === true) {
-        endpointToCall = '/api/plane/' + ident_public_key
-    }
+    // Work out which endpoint to call
+    endpointToCall = '/api/plane/' + ident_public_key;
+
     if (showMyPlane === false) {
         endpointToCall = '/api/planes/'
+    } 
+    if (source != 'findmyplane') {
+        endpointToCall = '/api/planes/'
     }
+    
 
+    // Find My Plane query
+    // This gets both the individual plane being tracked (if there is one)...
+    // ... and the Find My Plane traffic data
     $.ajax({
         type: 'GET',
         url: $SCRIPT_ROOT + endpointToCall,
@@ -100,7 +108,7 @@ function getSimulatorData() {
             
             if (data.status === "success") {
             
-                if (showMyPlane === true) {
+                if (showMyPlane === true && source === 'findmyplane') {
                     altitude = data.my_plane.current_altitude;
                     compass = data.my_plane.current_compass;
                     latitude = data.my_plane.current_latitude;
@@ -144,6 +152,44 @@ function getSimulatorData() {
             setConnectionStatus('error');
         }
     });
+
+    // Fly by wire sourcing - just for the individual plane
+    if (source === 'flybywire') {
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.flybywiresim.com/txcxn/_find',
+            data: {
+                flight: ident_public_key
+            },
+            contentType: 'application/json; charset=utf-8',
+            cache: false,
+            success: function(data) {
+                //Navigation
+                
+                if (data != []) {
+                
+                    if (showMyPlane === true) {
+                        altitude = data[0].trueAltitude;
+                        compass = data[0].heading;
+                        latitude = data[0].location.y;
+                        longitude = data[0].location.x;
+                        lastPlaneTimestamp = data[0].lastContact;
+                        secondsSinceLastPlaneTimestamp = 0.1;
+                    }
+    
+                    setConnectionStatus('connected');
+                }
+                
+                if (data === []) {
+                    console.log (data)
+                    setConnectionStatus('error')
+                }
+            },
+            error: function(){
+                setConnectionStatus('error');
+            }
+        }); 
+    }
 
     if (showMyPlane === true) {
         if (secondsSinceLastPlaneTimestamp < 15 && disconnectedFromServer != true) {
@@ -283,11 +329,13 @@ function loadTraffic(apiToCheck) {
 
                 data.results.forEach(function(otherPlane) {
 
-                    var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
-                    otherPlaneMarker.setRotationAngle(otherPlane.heading);
+                    if (otherPlane.flight != ident_public_key) {
+                        var otherPlaneMarker = L.marker([otherPlane.location.y, otherPlane.location.x], otherPlaneMarkerOptions);
+                        otherPlaneMarker.setRotationAngle(otherPlane.heading);
 
-                    otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.aircraftType, otherPlane.flight, "", otherPlane.trueAltitude, otherPlane.origin, otherPlane.destination, "flybywire")).openTooltip();
-                    otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
+                        otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.aircraftType, otherPlane.flight, "", otherPlane.trueAltitude, otherPlane.origin, otherPlane.destination, "flybywire")).openTooltip();
+                        otherPlaneMarker.addTo(flybywireTrafficLayerGroup)
+                    }
 
                 });
 

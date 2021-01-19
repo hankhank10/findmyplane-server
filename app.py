@@ -22,6 +22,8 @@ import secrets
 import os
 from pathlib import Path
 
+import requests
+
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -235,9 +237,6 @@ def api_view_plane_data(ident_public_key="none"):
 
     output_dictionary = {'status': 'success'}
 
-    # Format altitude
-
-
     if request.endpoint == 'my_plane':
         plane = Plane.query.filter_by(ident_public_key = ident_public_key).first_or_404()
 
@@ -438,17 +437,30 @@ def index():
 @app.route('/view/<ident_public_key>')
 def show_map(ident_public_key):
 
-    ident_public_key = ident_public_key.upper()
+    if len(ident_public_key) == 5: 
+        source = "findmyplane"
+    else:
+        source = "flybywire"
 
-    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
+    if source == "findmyplane":
 
-    if bool(plane) == False:
-        flash ("No record of ident "+ ident_public_key)
-        return redirect(url_for('index'))
+        ident_public_key = ident_public_key.upper()
+
+        plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
+
+        if bool(plane) == False:
+            flash ("No record of ident "+ ident_public_key + " with Find My Plane")
+            return redirect(url_for('index'))
+
+    if source == "flybywire":
+        r = requests.get('https://api.flybywiresim.com/txcxn/_find', {'flight': ident_public_key})
+        if r.json() == []: 
+            flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
+            return redirect(url_for('index'))
 
     stats_handler.increment_stat('map_loads')
 
-    return render_template('map.html', ident_public_key = ident_public_key)
+    return render_template('map.html', ident_public_key = ident_public_key, source = source)
 
 
 @app.route('/view_world')
