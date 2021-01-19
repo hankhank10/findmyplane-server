@@ -130,6 +130,8 @@
     let ident_public_key = '{{ ident_public_key }}';
     let showMyPlane = true;
 
+    zoom_level = 10
+
     if (ident_public_key === "WORLD") {
         showMyPlane = false;
         btnServerStatus.style.display = "none"
@@ -139,12 +141,13 @@
         btnClearPathHistory.style.display = "none";
         btnIdent.display = "none";
         $('#btnIdent').html ("Global view")
+        zoom_level = 6
     }
 
     // Create map options
     var mapOptions = {
         center: [41.8601, -87.6101],
-        zoom: 6,
+        zoom: zoom_level,
         dragging: true,
         worldCopyJump: true
     }
