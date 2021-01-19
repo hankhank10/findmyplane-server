@@ -22,6 +22,16 @@ import secrets
 import os
 from pathlib import Path
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(
+    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=1.0
+)
+
+
 # Define flask variables
 app = Flask(__name__)
 #import parse_pln
@@ -451,6 +461,11 @@ def download_link():
     stats_handler.increment_stat('downloads')
 
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.5/findmyplane-client-05s.zip')
+
+
+@app.route('/debug_sentry')
+def trigger_error():
+    division_by_zero = 1 / 0
 
 
 # All of thse are parsing PLN endpoints
