@@ -186,8 +186,9 @@ def api_update_location():
     plane_to_update.current_longitude = data_received['current_longitude']
     plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
-    plane_to_update.title = data_received['title']
-    plane_to_update.atc_id = data_received['atc_id']
+    
+    if data_received['title'] != None: plane_to_update.title = data_received['title']
+    if data_received['atc_id'] != None: plane_to_update.atc_id = data_received['atc_id']
 
 
     # Check if it is the first time data has been sent, because in that scenario we need to update the plane descriptions at the end of creating the record
