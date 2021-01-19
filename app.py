@@ -186,6 +186,9 @@ def api_update_location():
     plane_to_update.current_longitude = data_received['current_longitude']
     plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
+    plane_to_update.title = data_received['title']
+    plane_to_update.atc_id = data_received['atc_id']
+
 
     # Check if it is the first time data has been sent, because in that scenario we need to update the plane descriptions at the end of creating the record
     first_time = False
@@ -262,7 +265,7 @@ def api_view_plane_data(ident_public_key="none"):
             'seconds_since_last_update': plane.seconds_since_last_update,
             'minutes_since_last_update': plane.seconds_since_last_update / 60,
             'latitude_difference': latitude_difference,
-            'longitude_difference': longitude_difference
+            'longitude_difference': longitude_difference,
         }
         output_dictionary['my_plane'] = my_plane_dictionary
 
@@ -330,18 +333,22 @@ def backend_update_plane_descriptions():
         if plane.is_current and plane.ever_received_data:
             plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
             if plane_location['status'] == "success":
-                description_of_location = plane_location['text_expression']
-                plane.description_of_location = description_of_location
-
-                # Format altitude
-                altitude = plane.current_altitude
-                altitude = round(altitude,-3)
-                altitude = '{:.0f}'.format(altitude)
-
-                if plane.current_altitude != None:
-                    plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                
+                if plane.latitude < 0.02 and plane.longitude < 0.02:
+                    plane.full_plane_description = plane.title + " at null island somewhere off Ghana"
                 else:
-                    plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
+                    description_of_location = plane_location['text_expression']
+                    plane.description_of_location = description_of_location
+
+                    # Format altitude
+                    altitude = plane.current_altitude
+                    altitude = round(altitude,-3)
+                    altitude = '{:.0f}'.format(altitude)
+
+                    if plane.current_altitude != None:
+                        plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                    else:
+                        plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
 
                 number_of_planes_updated += 1
                 #print (plane.ident_public_key, plane.full_plane_description)
