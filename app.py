@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, flash, jsonify, Response
+from flask import Flask, flash, request, redirect, url_for, render_template, flash, jsonify, Response, send_file
 import secrets
 import random
 import string
@@ -455,20 +455,10 @@ def show_map(ident_public_key):
 def show_world_map():
     return render_template('map.html', ident_public_key = "WORLD")
 
-@app.route('/beta/<ident_public_key>')
-def beta_show_map(ident_public_key):
 
-    ident_public_key = ident_public_key.upper()
-
-    plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
-
-    if bool(plane) == False:
-        flash ("No record of ident "+ ident_public_key)
-        return redirect(url_for('index'))
-
-    stats_handler.increment_stat('map_loads')
-
-    return render_template('map-beta.html', ident_public_key = ident_public_key)
+@app.route('/stats')
+def stats_endpoint():
+    return jsonify(stats_handler.return_stats())
 
 
 @app.route('/latestclient')

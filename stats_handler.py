@@ -70,4 +70,8 @@ def load_stats_from_json():
     location_updates = stats_dictionary['location_updates']
 
 
+def return_stats():
+    return stats_dictionary
+
+
 load_stats_from_json()
