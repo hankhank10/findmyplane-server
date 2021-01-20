@@ -356,8 +356,9 @@ def backend_update_plane_descriptions():
 
     for plane in planes:
         if plane.ever_received_data and not plane.is_current:
-            print ("Deleting ", plane.ident_public_key)
-            db.session.delete(plane)
+            if plane.ident_public_key != "DUMMY":
+                print ("Deleting ", plane.ident_public_key)
+                db.session.delete(plane)
         
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
