@@ -487,7 +487,7 @@ def latest_client_check():
 def download_link():
     stats_handler.increment_stat('downloads')
 
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.5/findmyplane-client-05s.zip')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.6/findmyplane-client-6s.zip')
 
 
 @app.route('/debug_sentry')
