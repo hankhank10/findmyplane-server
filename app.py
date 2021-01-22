@@ -198,7 +198,10 @@ def api_update_location():
     plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
     
-    if 'title' in data_received: plane_to_update.title = data_received['title']
+    if 'title' in data_received: 
+        plane_title = data_received['title'].replace("Asobo", "")
+        plane_to_update.title = plane_title
+
     if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
 
 
