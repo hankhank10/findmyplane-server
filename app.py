@@ -36,7 +36,6 @@ sentry_sdk.init(
 
 # Define flask variables
 app = Flask(__name__)
-#import parse_pln
 app.secret_key = 'sdfdsagfdggdfsgdfg988'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
