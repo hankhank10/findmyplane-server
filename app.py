@@ -140,7 +140,7 @@ def api_new_plane():
     public_key = ''.join(random.choice(letters) for i in range(5))
     private_key = secrets.token_urlsafe(20)
 
-    plane_title = data_received['title'].replace("Asobo", "")
+    plane_title = data_received['title']
 
     new_plane = Plane (
         ident_public_key = public_key,
@@ -198,10 +198,7 @@ def api_update_location():
     plane_to_update.current_compass = current_compass
     plane_to_update.current_altitude = data_received['current_altitude']
     
-    if 'title' in data_received: 
-        plane_title = data_received['title'].replace("Asobo", "")
-        plane_to_update.title = plane_title
-
+    if 'title' in data_received: plane_to_update.title = data_received['title']
     if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
 
 
@@ -364,6 +361,8 @@ def backend_update_plane_descriptions():
         
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
+
+                if plane.title != None: plane.title = plane.title.replace("Asobo", "")
             
                 plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
                 if plane_location['status'] == "success":
