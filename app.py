@@ -68,7 +68,7 @@ class Plane(db.Model):
 
     @hybrid_property
     def current_compass_less_90(self):
-        if self.current_compass != None:
+        if self.current_compass is not None:
             return 0
 
         try:
@@ -82,8 +82,6 @@ class Plane(db.Model):
 
     @hybrid_property
     def seconds_since_last_update(self):
-        #print (str(self.id), self.last_update)
-            
         time_difference_seconds = datetime.utcnow() - self.last_update
         return time_difference_seconds.seconds
     
@@ -186,7 +184,7 @@ def api_update_location():
     plane_to_update.previous_longitude = plane_to_update.current_longitude
 
     current_compass = data_received['current_compass']
-    if current_compass == None:
+    if current_compass is None:
         current_compass = 0
     else:
         current_compass = round(current_compass,0)
@@ -225,7 +223,8 @@ def api_update_location():
     if first_time:
         backend_update_plane_descriptions()
 
-    if data_received['ident_public_key'] != "DUMMY": stats_handler.increment_stat('location_updates')
+    if data_received['ident_public_key'] != "DUMMY":
+        stats_handler.increment_stat('location_updates')
 
     return "ok"
 
@@ -384,10 +383,6 @@ def backend_update_plane_descriptions():
                             plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
 
                     number_of_planes_updated += 1
-                    #print (plane.ident_public_key, plane.full_plane_description)
-                else:
-                    #print ("City API status", plane_location['status'])
-                    pass
 
     db.session.commit()
     return str(number_of_planes_updated) + " plane descriptions updated"
@@ -405,7 +400,7 @@ def number_of_current_planes():
     return str(plane_count)
 
 
-def some_random_current_planes(how_many = 5):
+def some_random_current_planes(how_many=5):
     planes_list = Plane.query.filter(Plane.ever_received_data == True).order_by(Plane.last_update.desc()).limit(how_many*2).all()
 
     plane_count = 0
@@ -413,7 +408,7 @@ def some_random_current_planes(how_many = 5):
 
     for plane in planes_list:
         if plane.is_current:
-            if plane_count <= how_many -1:
+            if plane_count <= how_many - 1:
                 filtered_planes_list.append(plane)
                 plane_count = plane_count + 1
 
@@ -433,7 +428,9 @@ def index():
 
     if request.method == 'GET':
         stats_handler.increment_stat('homepage_loads')
-        return render_template('index.html', number_of_current_planes=number_of_current_planes(), some_random_current_planes = some_random_current_planes(10))
+        return render_template('index.html',
+                               number_of_current_planes=number_of_current_planes(),
+                               some_random_current_planes=some_random_current_planes(10))
 
 
 @app.route('/view/<ident_public_key>')
@@ -465,12 +462,15 @@ def show_map(ident_public_key):
 
     stats_handler.increment_stat('map_loads')
 
-    return render_template('map.html', ident_public_key = ident_public_key, source = source)
+    return render_template('map.html',
+                           ident_public_key=ident_public_key,
+                           source=source)
 
 
 @app.route('/view_world')
 def show_world_map():
-    return render_template('map.html', ident_public_key = "WORLD")
+    return render_template('map.html',
+                           ident_public_key="WORLD")
 
 
 @app.route('/stats')
@@ -594,17 +594,16 @@ def save_file(filename, pln_dictionary):
 
 
 @app.route('/api/upload_pln', methods=['GET', 'POST'])
-def receive_upload(simple = True):
+def receive_upload(simple=True):
     
     if request.method == "GET":
         return render_template('upload.html')
 
-
     if request.method == "POST":
-        
+
         if 'file' not in request.files:
             return "No file uploaded"
-        
+
         temporary_filename = secrets.token_urlsafe(25)
 
         file = request.files['file']
@@ -618,12 +617,12 @@ def receive_upload(simple = True):
         new_route = open_file('uploads/' + temporary_filename)
         fixed_route = fix_waypoints(new_route)
 
-        if simple == False:
-            return (jsonify(fixed_route))
-        
-        else:
+        if simple:
             simple_route = simplify_route(fixed_route)
             return jsonify(simple_route)
+        else:
+            return jsonify(fixed_route)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8765, debug=True)
