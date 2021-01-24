@@ -484,7 +484,7 @@ def latest_client_check():
 
 
 @app.route('/download')
-@app.route('/download/findmyplane-setup.exe'
+@app.route('/download/findmyplane-setup.exe')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
     redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.7/findmyplane-setup.exe")
