@@ -365,18 +365,31 @@
                         <div class="content-text content-left-content">
                             <div class="content-small-card">
                                 <div class="card-icon">
-                                    <a href="{{ url_for('download_link') }}" class="text-decoration-none"><i class="fab fa-windows fa-2x"></i></a>
+                                    <a href="{{ url_for('download_setup_link') }}" class="text-decoration-none"><i class="fab fa-windows fa-2x"></i></a>
                                 </div>
                                 <div class="card-content">
                                     <h5>
-                                        <a href="{{ url_for('download_link') }}" class="text-decoration-none">Windows .exe</a>
+                                        <a href="{{ url_for('download_setup_link') }}" class="text-decoration-none">Windows setup .exe</a>
                                     </h5>
                                     <p>
-                                        <a href="{{ url_for('download_link') }}" class="text-decoration-none">The simple route - download and run an executable program. No configuration required.</a>
+                                        <a href="{{ url_for('download_setup_link') }}" class="text-decoration-none">The simple route - download and run an executable program to install. No configuration required.</a>
                                     </p>
                                     <p>
                                         <a href="https://github.com/hankhank10/findmyplane-client/blob/main/readme.md">Full instructions here if you get stuck...</p>
                                     </a>
+                                </div>
+                            </div>
+                            <div class="content-small-card">
+                                <div class="card-icon">
+                                    <a href="{{ url_for('download_zip_link') }}" class="text-decoration-none"><i class="far fa-file-archive"></i></a>
+                                </div>
+                                <div class="card-content">
+                                    <h5>
+                                        <a href="{{ url_for('download_zip_link') }}" class="text-decoration-none">Windows .zip</a>
+                                    </h5>
+                                    <p>
+                                        <a href="{{ url_for('download_zip_link') }}" class="text-decoration-none">Download zip, extract and run findmyplane-client.exe.</a>
+                                    </p>
                                 </div>
                             </div>
                             <div class="content-small-card">
