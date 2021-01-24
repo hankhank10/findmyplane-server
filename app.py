@@ -361,8 +361,10 @@ def backend_update_plane_descriptions():
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
 
-                if plane.title != None: plane.title = plane.title.replace("Asobo", "")
-            
+                if plane.title != None: 
+                    plane.title = plane.title.replace("Asobo", "")
+                    plane.title = plane.title.replace("DCDesigns_", "")
+
                 plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
                 if plane_location['status'] == "success":
                     

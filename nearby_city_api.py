@@ -11,7 +11,7 @@ def find_closest_city (latitude, longitude):
     data_to_pass = {
         'radius': 15000,
         'limit': 1,
-        'minPopulation': 1000000,
+        'minPopulation': 500000,
         'types': 'CITY'
     }
 
