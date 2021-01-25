@@ -365,6 +365,9 @@ def backend_update_plane_descriptions():
                     plane.title = plane.title.replace("Asobo", "")
                     plane.title = plane.title.replace("DCDesigns_", "")
 
+                    plane.title = plane.title.replace("F15E", "F-15E")
+
+
                 plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
                 if plane_location['status'] == "success":
                     

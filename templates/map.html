@@ -11,6 +11,8 @@
     gtag('config', 'G-CRSVBM9X07');
     </script>
 
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon2.ico') }}">
+
     <!-- Hotjar Tracking Code for findmyplane.live -->
     <script>
         (function(h,o,t,j,a,r){
@@ -24,7 +26,7 @@
     </script>
 
     <meta charset="UTF-8">
-    <title>Find My Plane - view flight</title>
+    <title>Find My Plane -  {{ ident_public_key }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 
     <meta name="apple-mobile-web-app-title" content="Find My Plane">
@@ -120,11 +122,11 @@
 
     <footer class="footer">
         <div class="container">
-            <button type="button" id="btnIdent" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
-            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Connection to findmyplane server" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
-            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" aria-label="Receiving data from your plane" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
-            <button type="button" id="btnFBWTraffic" class="btn btn-warning btn-sm" aria-label="Traffic from fly-by-wire (capped at 100)" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Fly By Wire traffic <i class="fas fa-sync fa-spin"></i></b></button>
-            <button type="button" id="btnFMPTraffic" class="btn btn-warning btn-sm" aria-label="Traffic from FindMyPlane.live" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Find My Plane traffic <i class="fas fa-sync fa-spin"></i></b></button>
+            <button type="button" id="btnIdent" class="btn btn-primary btn-sm" style="pointer-events: none">Ident <b>{{ ident_public_key }}</b></button>
+            <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" style="pointer-events: none" aria-label="Connection to findmyplane server" data-microtip-position="right" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnPlaneStatus" class="btn btn-warning btn-sm" style="pointer-events: none" aria-label="Receiving data from your plane" data-microtip-position="right" role="tooltip"><i class="fas fa-plane"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
+            <button type="button" id="btnFBWTraffic" class="btn btn-warning btn-sm" style="pointer-events: none" aria-label="Traffic from fly-by-wire (capped at 100)" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Fly By Wire traffic <i class="fas fa-sync fa-spin"></i></b></button>
+            <button type="button" id="btnFMPTraffic" class="btn btn-warning btn-sm" style="pointer-events: none" aria-label="Traffic from FindMyPlane.live" data-microtip-position="right" role="tooltip"><i class="fas fa-traffic-light"></i> Loading Find My Plane traffic <i class="fas fa-sync fa-spin"></i></b></button>
 
 
             <button type="button" id="btnClearPathHistory" class="btn btn-danger btn-sm float-right" aria-label="Delete the historical path" data-microtip-position="left" role="tooltip" onclick="clearPathHistory()"><i class="fas fa-trash"></i> Delete path history</button>
