@@ -493,13 +493,13 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.7/findmyplane-setup.exe')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.exe')
 
 
-@app.route('/download/findmyplane-client.zip')
-def download_zip_link():
+@app.route('/download/findmyplane-client.exe')
+def download_exe_link():
     stats_handler.increment_stat('downloads')
-    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.7/findmyplane-client-7.zip")
+    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
 
 
 @app.route('/debug_sentry')
