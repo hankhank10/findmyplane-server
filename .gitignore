@@ -13,3 +13,7 @@ findmyplanedb.sqlite
 migrations/versions/115b8d413c1b_.py
 migrations/versions/216fa45ddc99_.py
 app.py
+.vscode/settings.json
+migrations/env.py
+migrations/env.py
+.vscode/settings.json

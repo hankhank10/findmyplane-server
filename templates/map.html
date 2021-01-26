@@ -89,7 +89,7 @@
 <div class="container-fluid p-0" style="height: 100%; width: 100%;">  <!--Main container-->
 
     <!-- NAVBAR -->
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top">
+	<nav id="navbar" class="navbar navbar-expand-md navbar-dark bg-dark navbar-fixed-top">
 		<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
 			<ul class="navbar-nav mr-auto">
 				<button id=followModeButton class="btn btn-primary btn-sm" type="button" onclick="toggleFollowPlane()">
@@ -114,13 +114,13 @@
         </div>
     </nav>
 
-    <div class="row p-2" style="height: 80vh">
+    <div id="mapContainer" class="row p-2" style="height: 80vh">
 		<div class="col-sm-12 col-xl-12 no-gutters collapse show p-0" style="background-color: grey;" id="map_column" style="position: relative; height=100%;">
-			<div id = "map" style = "height: 100%; width: 100%;"></div>
+			<div id="map" style="height: 100%; width: 100%;"></div>
 		</div>
     </div>
 
-    <footer class="footer">
+    <footer id="statusbar" class="footer">
         <div class="container">
             <button type="button" id="btnIdent" class="btn btn-primary btn-sm">Ident <b>{{ ident_public_key }}</b></button>
             <button type="button" id="btnServerStatus" class="btn btn-warning btn-sm" aria-label="Connection to findmyplane server" data-microtip-position="bottom" role="tooltip"><i class="fas fa-server"></i> Connecting &nbsp <i class="fas fa-sync fa-spin"></i></button>
@@ -145,6 +145,15 @@
     </footer>
 
 </div> <!-- Main container -->
+
+{% if just_map == True %}
+    <script>
+        $('#navbar').addClass('d-none');
+        $('#statusbar').addClass('d-none');
+        $('#mapContainer').css('height', '100vh')
+    </script>
+{% endif %}
+
 
 <!-- Create map object -->
 <script>

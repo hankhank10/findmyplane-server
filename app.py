@@ -475,7 +475,8 @@ def show_map(ident_public_key):
 @app.route('/view_world')
 def show_world_map():
     return render_template('map.html',
-                           ident_public_key="WORLD")
+                           ident_public_key="WORLD",
+                           just_map = False)
 
 
 @app.route('/stats')

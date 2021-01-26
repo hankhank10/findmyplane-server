@@ -73,5 +73,4 @@ def load_stats_from_json():
 def return_stats():
     return stats_dictionary
 
-
 load_stats_from_json()
