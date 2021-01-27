@@ -25,19 +25,24 @@ from pathlib import Path
 import requests
 
 import logging
+from flask_cors import CORS
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from flask_cors import CORS
+from google.analytics.measurement_protocol import GoogleAnalytics
 
 
+# Sentry
 sentry_sdk.init(
     dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
     integrations=[FlaskIntegration()],
     traces_sample_rate=1.0
 )
 
+# Google Analytics backend tracking
+ga = GoogleAnalytics('UA-187976300-1')
+ga.set(user_id='python_backend')
 
 # Define flask variables
 app = Flask(__name__)
@@ -177,6 +182,7 @@ def api_new_plane():
     }
 
     stats_handler.increment_stat('planes_created')
+    ga.send_event('usage', 'new plane instance', '')
 
     return jsonify(output_dictionary)
 
@@ -237,6 +243,7 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler.increment_stat('location_updates')
+        ga.send_event('usage', 'plane location updated', ident_public_key)
 
     return "ok"
 
@@ -353,6 +360,11 @@ def api_view_plane_data(ident_public_key="none"):
             }
             output_dictionary['other_planes'].append(other_plane_dictionary)
     
+    #if request.endpoint == "my_plane":
+    #    ga.send_event('usage', 'api query one plane', ident_public_key)
+    #if request.endpoint == "all_planes":
+    #    ga.send_event('usage', 'api query all planes', ident_public_key)
+
     return jsonify(output_dictionary)
 
 
@@ -389,12 +401,12 @@ def backend_update_plane_descriptions():
                         description_of_location = plane_location['text_expression']
                         plane.description_of_location = description_of_location
 
-                        # Format altitude
-                        altitude = plane.current_altitude
-                        altitude = round(altitude,-3)
-                        altitude = '{:.0f}'.format(altitude)
-
                         if plane.current_altitude != None:
+                            # Format altitude
+                            altitude = plane.current_altitude
+                            altitude = round(altitude,-3)
+                            altitude = '{:.0f}'.format(altitude)
+                            # Set description
                             plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
                         else:
                             plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
@@ -508,18 +520,23 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
+    ga.send_event('download', 'setup.exe', '')
+
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.exe')
 
 
 @app.route('/download/findmyplane-client.exe')
 def download_exe_link():
     stats_handler.increment_stat('downloads')
+    ga.send_event('download', 'client.exe', '')
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
 
 
-@app.route('/debug_sentry')
+@app.route('/ga_ping')
 def trigger_error():
-    division_by_zero = 1 / 0
+    ga.send_event('ping!', 'ping!!', 'what')
+
+    return "done"
 
 
 # All of thse are parsing PLN endpoints
