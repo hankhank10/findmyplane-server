@@ -2,6 +2,9 @@ import requests
 
 def find_closest_city (latitude, longitude):
 
+    if latitude == None or longitude == None:
+        return {'status': 'error'}
+        
     latitude_string = "{0:+.05f}".format(latitude)
     longitude_string = "{0:+.05f}".format(longitude)
 

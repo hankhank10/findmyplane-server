@@ -24,6 +24,8 @@ from pathlib import Path
 
 import requests
 
+import logging
+
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -207,16 +209,16 @@ def api_update_location():
         first_time = True
 
     # Create waypoint record
-    if data_received['ident_public_key'] != "DUMMY":
-        new_waypoint = Waypoint (
-            ident_public_key = data_received['ident_public_key'].upper(),
-            latitude = data_received['current_latitude'],
-            longitude = data_received['current_longitude'],
-            compass = data_received['current_compass'],
-            altitude = data_received['current_altitude']
-        )
-    
-        db.session.add(new_waypoint)
+    #if data_received['ident_public_key'] != "DUMMY":
+    #    new_waypoint = Waypoint (
+    #        ident_public_key = data_received['ident_public_key'].upper(),
+    #        latitude = data_received['current_latitude'],
+    #        longitude = data_received['current_longitude'],
+    #        compass = data_received['current_compass'],
+    #        altitude = data_received['current_altitude']
+    #    )
+    #
+    #    db.session.add(new_waypoint)
         
     db.session.commit()
 
@@ -457,9 +459,12 @@ def show_map(ident_public_key):
             return redirect(url_for('index'))
 
     if source == "flybywire":
-        r = requests.get('https://api.flybywiresim.com/txcxn/_find', {'flight': ident_public_key})
-
-        json_output = r.json()
+        try:
+            r = requests.get('https://api.flybywiresim.com/txcxn/_find', {'flight': ident_public_key})
+            json_output = r.json()
+        except:
+            json_output = []
+            logging.error("Fly By Wire API returned an error when trying to search for flight  " + ident_public_key)
 
         if json_output == [] or json_output[0]['flight'] != ident_public_key: 
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
