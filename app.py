@@ -29,6 +29,9 @@ import logging
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from flask_cors import CORS
+
+
 sentry_sdk.init(
     dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
     integrations=[FlaskIntegration()],
@@ -40,6 +43,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 app.secret_key = 'sdfdsagfdggdfsgdfg988'
 app.config['UPLOAD_FOLDER'] = 'uploads'
+CORS(app)
 
 # DB initialisation
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///findmyplanedb.sqlite'
@@ -105,6 +109,12 @@ class Waypoint(db.Model):
 
 
 # API Endpoints
+
+@app.route('/api')
+def api_docs():
+    return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
+
+
 @app.route('/api/create_dummy_plane')
 def api_dummy_plane():
 
