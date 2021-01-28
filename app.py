@@ -30,7 +30,7 @@ from flask_cors import CORS
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
-from google.analytics.measurement_protocol import GoogleAnalytics
+#from google.analytics.measurement_protocol import GoogleAnalytics
 
 
 # Sentry
@@ -41,8 +41,8 @@ sentry_sdk.init(
 )
 
 # Google Analytics backend tracking
-ga = GoogleAnalytics('UA-187976300-1')
-ga.set(user_id='python_backend')
+#ga = GoogleAnalytics('UA-187976300-1')
+#ga.set(user_id='python_backend')
 
 # Define flask variables
 app = Flask(__name__)
@@ -155,7 +155,13 @@ def api_new_plane():
     public_key = ''.join(random.choice(letters) for i in range(5))
     private_key = secrets.token_urlsafe(20)
 
-    plane_title = data_received['title']
+    plane_title = "Unknown plane"
+    atc_id = "Unknown callsign"
+
+    if data_received['title'] != None:
+        plane_title = data_received['title']
+    if data_received['atc_id'] != None:
+        atc_id = data_received['atc_id']
 
     new_plane = Plane (
         ident_public_key = public_key,
@@ -168,7 +174,7 @@ def api_new_plane():
         current_altitude = 0,
         last_update = datetime.utcnow(),
         title = plane_title,
-        atc_id = data_received['atc_id'],
+        atc_id = atc_id,
         ever_received_data = False
     )
     
@@ -182,7 +188,7 @@ def api_new_plane():
     }
 
     stats_handler.increment_stat('planes_created')
-    ga.send_event('usage', 'new plane instance', '')
+    #ga.send_event('usage', 'new plane instance', '')
 
     return jsonify(output_dictionary)
 
@@ -243,7 +249,7 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler.increment_stat('location_updates')
-        ga.send_event('usage', 'plane location updated', ident_public_key)
+        #ga.send_event('usage', 'plane location updated', data_received['ident_public_key'])
 
     return "ok"
 
@@ -277,10 +283,8 @@ def api_view_plane_data(ident_public_key="none"):
                 }
             }) 
 
-        if plane.previous_latitude == None:
-            plane.previous_latitude = 0
-        if plane.previous_longitude == None:
-            plane.previous_longitude = 0
+        if plane.previous_latitude == None: plane.previous_latitude = 0
+        if plane.previous_longitude == None: plane.previous_longitude = 0
         db.session.commit()
 
         latitude_difference = abs(plane.current_latitude) - abs(plane.previous_latitude)
@@ -407,7 +411,10 @@ def backend_update_plane_descriptions():
                             altitude = round(altitude,-3)
                             altitude = '{:.0f}'.format(altitude)
                             # Set description
-                            plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                            try:
+                                plane.full_plane_description = plane.title + " at " + altitude + "ft, " + description_of_location
+                            except:
+                                plane.full_plane_description = "A plane somewhere"
                         else:
                             plane.full_plane_description = plane.title + " at unknown altitude " + description_of_location
 
@@ -520,7 +527,7 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
-    ga.send_event('download', 'setup.exe', '')
+    #ga.send_event('download', 'setup.exe', '')
 
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.exe')
 
@@ -528,13 +535,13 @@ def download_setup_link():
 @app.route('/download/findmyplane-client.exe')
 def download_exe_link():
     stats_handler.increment_stat('downloads')
-    ga.send_event('download', 'client.exe', '')
+    #ga.send_event('download', 'client.exe', '')
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
 
 
 @app.route('/ga_ping')
 def trigger_error():
-    ga.send_event('ping!', 'ping!!', 'what')
+    #ga.send_event('ping!', 'ping!!', 'what')
 
     return "done"
 
