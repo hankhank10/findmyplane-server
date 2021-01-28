@@ -525,11 +525,12 @@ def latest_client_check():
 
 @app.route('/download')
 @app.route('/download/findmyplane-setup.exe')
+@app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
     #ga.send_event('download', 'setup.exe', '')
 
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.exe')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
