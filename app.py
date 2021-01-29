@@ -27,18 +27,23 @@ import requests
 import logging
 from flask_cors import CORS
 
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
+# Error messages
+error_message_400 = {'status': 'error', 
+                     'message': 'The necessary variables were not provided. Please check the API documentation.'}
+
+
+#import sentry_sdk
+#from sentry_sdk.integrations.flask import FlaskIntegration
 
 #from google.analytics.measurement_protocol import GoogleAnalytics
 
 
 # Sentry
-sentry_sdk.init(
-    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
-    integrations=[FlaskIntegration()],
-    traces_sample_rate=1.0
-)
+#sentry_sdk.init(
+#    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
+#    integrations=[FlaskIntegration()],
+#    traces_sample_rate=1.0
+#)
 
 # Google Analytics backend tracking
 #ga = GoogleAnalytics('UA-187976300-1')
@@ -70,12 +75,16 @@ class Plane(db.Model):
     previous_longitude = db.Column(db.Float, default=0)
     current_compass = db.Column(db.Integer, default=0)
     current_altitude = db.Column(db.Integer, default=0)
+    current_speed = db.Column(db.Integer, default=0)
     last_update = db.Column(db.DateTime, default=0)
+    time_created = db.Column(db.DateTime, default=0)
     ever_received_data = db.Column(db.Boolean, default=false)
-    title = db.Column(db.String)
-    atc_id = db.Column(db.String)
+    title = db.Column(db.String, default="Unknown aircraft")
+    atc_id = db.Column(db.String, default="Unknown callsign")
     description_of_location = db.Column(db.String)
     full_plane_description = db.Column(db.String)
+    client = db.Column(db.String, default="Find My Plane")
+    on_ground = db.Column(db.Boolean, default=False)
 
     @hybrid_property
     def current_compass_less_90(self):
@@ -135,6 +144,9 @@ def api_dummy_plane():
         last_update = datetime.utcnow(),
         title = "Boeing 747",
         atc_id = "DUM 1",
+        current_speed = 0,
+        client= "Find My Plane",
+        on_ground = False,
         ever_received_data = False
     )
     
@@ -155,13 +167,16 @@ def api_new_plane():
     public_key = ''.join(random.choice(letters) for i in range(5))
     private_key = secrets.token_urlsafe(20)
 
-    plane_title = "Unknown plane"
+    # Set the default variables
+    plane_title = "Unknown aircraft"
     atc_id = "Unknown callsign"
+    client = "Find My Plane"
 
-    if data_received['title'] != None:
-        plane_title = data_received['title']
-    if data_received['atc_id'] != None:
-        atc_id = data_received['atc_id']
+    # But replace them if they have been passed
+    if not data_received is None:
+        if 'title' in data_received: plane_title = data_received['title']
+        if 'atc_id' in data_received: atc_id = data_received['atc_id']
+        if 'client' in data_received: client = data_received['client']
 
     new_plane = Plane (
         ident_public_key = public_key,
@@ -173,8 +188,10 @@ def api_new_plane():
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
+        time_created = datetime.utcnow(),
         title = plane_title,
         atc_id = atc_id,
+        client = client,
         ever_received_data = False
     )
     
@@ -188,7 +205,6 @@ def api_new_plane():
     }
 
     stats_handler.increment_stat('planes_created')
-    #ga.send_event('usage', 'new plane instance', '')
 
     return jsonify(output_dictionary)
 
@@ -198,37 +214,64 @@ def api_update_location():
 
     data_received = request.json
 
-    if data_received['current_latitude'] == 0 or data_received['current_longitude'] == 0:
-        return "ignoring as null island"
+    # Check that information has been passed
+    if data_received is None: return jsonify(error_message_400), 400
+    if not 'ident_public_key' in data_received: return jsonify(error_message_400), 400
+    if not 'ident_private_key' in data_received: return jsonify(error_message_400), 400
 
-    # Update plane information
-    plane_to_update = Plane.query.filter_by(ident_public_key = data_received['ident_public_key'].upper(), ident_private_key = data_received['ident_private_key']).first_or_404()
-
-    plane_to_update.previous_latitude = plane_to_update.current_latitude
-    plane_to_update.previous_longitude = plane_to_update.current_longitude
-
-    current_compass = data_received['current_compass']
-    if current_compass is None:
-        current_compass = 0
-    else:
-        current_compass = round(current_compass,0)
-        current_compass = '{:.0f}'.format(current_compass)
-
-    plane_to_update.last_update = datetime.utcnow()
-    plane_to_update.current_latitude = data_received['current_latitude']
-    plane_to_update.current_longitude = data_received['current_longitude']
-    plane_to_update.current_compass = current_compass
-    plane_to_update.current_altitude = data_received['current_altitude']
-    
-    if 'title' in data_received: plane_to_update.title = data_received['title']
-    if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
-
+    # Find the plane requested
+    plane_to_update = Plane.query.filter_by(
+        ident_public_key = data_received['ident_public_key'].upper(), 
+        ident_private_key = data_received['ident_private_key']
+        ).first_or_404()
 
     # Check if it is the first time data has been sent, because in that scenario we need to update the plane descriptions at the end of creating the record
     first_time = False
     if plane_to_update.ever_received_data == False:
         plane_to_update.ever_received_data = True
         first_time = True
+
+    # Get the compass, but if it's none then default to 0
+    current_compass = None
+    if 'current_compass' in data_received:
+        current_compass = data_received['current_compass']
+        current_compass = round(current_compass,0)
+        current_compass = '{:.0f}'.format(current_compass)
+
+    # Do the update for mandatory data
+    plane_to_update.last_update = datetime.utcnow()
+
+    # Set the optional variables
+    if 'current_latitude' in data_received: 
+        if first_time:
+            plane_to_update.previous_latitude = data_received['current_latitude']
+        else:
+            plane_to_update.previous_latitude = plane_to_update.current_latitude
+        
+        plane_to_update.current_latitude = data_received['current_latitude']
+    
+    if 'current_longitude' in data_received: 
+        if first_time:
+            plane_to_update.previous_longitude = data_received['current_longitude']
+        else:
+            plane_to_update.previous_longitude = plane_to_update.current_longitude
+
+        plane_to_update.current_longitude = data_received['current_longitude']    
+    
+    if 'current_compass' in data_received:
+        current_compass = data_received['current_compass']
+        current_compass = round(current_compass,0)
+        current_compass = '{:.0f}'.format(current_compass)
+        plane_to_update.current_compass = current_compass
+    
+    if 'current_altitude' in data_received: plane_to_update.current_altitude = data_received['current_altitude']
+    if 'current_speed' in data_received: plane_to_update.current_speed = data_received['current_speed']
+    if 'on_ground' in data_received: plane_to_update.on_ground = data_received['on_ground']
+    if 'title' in data_received: plane_to_update.title = data_received['title']
+    if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
+    if 'client' in data_received: plane_to_update.client = data_received['client']
+    if 'speed' in data_received: plane_to_update.speed = data_received['speed']
+
 
     # Create waypoint record
     #if data_received['ident_public_key'] != "DUMMY":
@@ -249,9 +292,8 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler.increment_stat('location_updates')
-        #ga.send_event('usage', 'plane location updated', data_received['ident_public_key'])
 
-    return "ok"
+    return jsonify({'status': 'success'})
 
 
 @app.route ('/api/plane/<ident_public_key>', endpoint='my_plane')
@@ -300,7 +342,7 @@ def api_view_plane_data(ident_public_key="none"):
                     'previous_latitude': plane.previous_latitude,
                     'previous_longitude': plane.previous_longitude,
                     'latitude_difference': latitude_difference,
-                    'longitude_difference': longitude_difference
+                    'longitude_difference': longitude_difference,
                 }
             })
             
@@ -310,15 +352,22 @@ def api_view_plane_data(ident_public_key="none"):
             'current_longitude': plane.current_longitude,
             'current_compass': plane.current_compass,
             'current_altitude': altitude,
+            'current_speed': plane.current_speed,
             'last_update': plane.last_update,
+            'time_created': plane.time_created,
             'ever_received_data': plane.ever_received_data,
             'seconds_since_last_update': plane.seconds_since_last_update,
             'minutes_since_last_update': plane.seconds_since_last_update / 60,
             'latitude_difference': latitude_difference,
             'longitude_difference': longitude_difference,
+            'on_ground': plane.on_ground,
+            'client': plane.client,
+            'title': plane.title,
+            'atc_id': plane.atc_id
         }
         output_dictionary['my_plane'] = my_plane_dictionary
 
+    # Do the other planes
     output_dictionary['other_planes'] = []
 
     north = request.args.get('north')
@@ -360,7 +409,10 @@ def api_view_plane_data(ident_public_key="none"):
                 'current_altitude': altitude,
                 'current_compass': traffic_plane.current_compass,
                 'title': traffic_plane.title,
-                'atc_id': traffic_plane.atc_id
+                'atc_id': traffic_plane.atc_id,
+                'client': traffic_plane.client,
+                'speed': traffic_plane.speed,
+                'on_ground': traffic_plane.on_ground
             }
             output_dictionary['other_planes'].append(other_plane_dictionary)
     
@@ -503,7 +555,8 @@ def show_map(ident_public_key):
 
     return render_template('map.html',
                            ident_public_key=ident_public_key,
-                           source=source)
+                           source=source,
+                           just_map = False)
 
 
 @app.route('/view_world')
@@ -528,15 +581,12 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
     stats_handler.increment_stat('downloads')
-    #ga.send_event('download', 'setup.exe', '')
-
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 def download_exe_link():
-    stats_handler.increment_stat('downloads')
-    #ga.send_event('download', 'client.exe', '')
+    stats_handler.increment_stat('downloads')    
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
 
 
