@@ -76,8 +76,8 @@ class Plane(db.Model):
     current_compass = db.Column(db.Integer, default=0)
     current_altitude = db.Column(db.Integer, default=0)
     current_speed = db.Column(db.Integer, default=0)
-    last_update = db.Column(db.DateTime, default=0)
-    time_created = db.Column(db.DateTime, default=0)
+    last_update = db.Column(db.DateTime, default=datetime.utcnow())
+    time_created = db.Column(db.DateTime, default=datetime.utcnow())
     ever_received_data = db.Column(db.Boolean, default=false)
     title = db.Column(db.String, default="Unknown aircraft")
     atc_id = db.Column(db.String, default="Unknown callsign")
@@ -142,6 +142,7 @@ def api_dummy_plane():
         current_compass = 0,
         current_altitude = 0,
         last_update = datetime.utcnow(),
+        time_created = datetime.utcnow(),
         title = "Boeing 747",
         atc_id = "DUM 1",
         current_speed = 0,
@@ -411,7 +412,7 @@ def api_view_plane_data(ident_public_key="none"):
                 'title': traffic_plane.title,
                 'atc_id': traffic_plane.atc_id,
                 'client': traffic_plane.client,
-                'speed': traffic_plane.speed,
+                'current_speed': traffic_plane.current_speed,
                 'on_ground': traffic_plane.on_ground
             }
             output_dictionary['other_planes'].append(other_plane_dictionary)
