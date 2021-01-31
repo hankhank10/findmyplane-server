@@ -32,22 +32,17 @@ error_message_400 = {'status': 'error',
                      'message': 'The necessary variables were not provided. Please check the API documentation.'}
 
 
-#import sentry_sdk
-#from sentry_sdk.integrations.flask import FlaskIntegration
-
-#from google.analytics.measurement_protocol import GoogleAnalytics
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 
 # Sentry
-#sentry_sdk.init(
-#    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
-#    integrations=[FlaskIntegration()],
-#    traces_sample_rate=1.0
-#)
+sentry_sdk.init(
+    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=1.0
+)
 
-# Google Analytics backend tracking
-#ga = GoogleAnalytics('UA-187976300-1')
-#ga.set(user_id='python_backend')
 
 # Define flask variables
 app = Flask(__name__)
@@ -204,7 +199,7 @@ def api_new_plane():
         "ident_private_key": private_key
     }
 
-    stats_handler.increment_stat('planes_created')
+    #stats_handler.increment_stat('planes_created')
 
     return jsonify(output_dictionary)
 
@@ -290,8 +285,8 @@ def api_update_location():
     if first_time:
         backend_update_plane_descriptions()
 
-    if data_received['ident_public_key'] != "DUMMY":
-        stats_handler.increment_stat('location_updates')
+    #if data_received['ident_public_key'] != "DUMMY":
+    #    stats_handler.increment_stat('location_updates')
 
     return jsonify({'status': 'success'})
 
@@ -515,7 +510,7 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        stats_handler.increment_stat('homepage_loads')
+        #stats_handler.increment_stat('homepage_loads')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
                                some_random_current_planes=some_random_current_planes(10))
@@ -551,7 +546,7 @@ def show_map(ident_public_key):
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 
-    stats_handler.increment_stat('map_loads')
+    #stats_handler.increment_stat('map_loads')
 
     return render_template('map.html',
                            ident_public_key=ident_public_key,
@@ -580,13 +575,13 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
-    stats_handler.increment_stat('downloads')
+    #stats_handler.increment_stat('downloads')
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 def download_exe_link():
-    stats_handler.increment_stat('downloads')    
+    #stats_handler.increment_stat('downloads')    
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
 
 
