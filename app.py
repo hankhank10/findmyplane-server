@@ -15,6 +15,7 @@ from sqlalchemy.sql.expression import false
 
 import nearby_city_api
 import stats_handler2
+import tweeter
 
 import xmltodict
 import json
@@ -201,6 +202,13 @@ def api_new_plane():
     }
 
     stats_handler2.log_event('new_plane')
+
+    # Tweet
+    try:
+        tweet_message = "New flight: " + plane_title + " with callsign " + atc_id + ". Follow along live at https://findmyplane.live/view/" + public_key
+        tweeter.post_tweet(tweet_message)
+    except:
+        pass
 
     return jsonify(output_dictionary)
 
