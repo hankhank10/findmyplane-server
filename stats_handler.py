@@ -71,6 +71,15 @@ def load_stats_from_json():
 
 
 def return_stats():
+
+    stats_dictionary = {
+        'homepage_loads': homepage_loads,
+        'downloads': downloads,
+        'map_loads': map_loads,
+        'planes_created': planes_created,
+        'location_updates': location_updates
+    }
     return stats_dictionary
+
 
 load_stats_from_json()

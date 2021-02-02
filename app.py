@@ -200,7 +200,7 @@ def api_new_plane():
         "ident_private_key": private_key
     }
 
-    #stats_handler.increment_stat('planes_created')
+    stats_handler.increment_stat('planes_created')
 
     return jsonify(output_dictionary)
 
@@ -286,8 +286,8 @@ def api_update_location():
     if first_time:
         backend_update_plane_descriptions()
 
-    #if data_received['ident_public_key'] != "DUMMY":
-    #    stats_handler.increment_stat('location_updates')
+    if data_received['ident_public_key'] != "DUMMY":
+        stats_handler.increment_stat('location_updates')
 
     return jsonify({'status': 'success'})
 
@@ -440,7 +440,8 @@ def backend_update_plane_descriptions():
                 if plane.title != None: 
                     plane.title = plane.title.replace("Asobo", "")
                     plane.title = plane.title.replace("DCDesigns_", "")
-
+                    plane.title = plane.title.replace("Aircraft Mega Pack", "")
+                    
                     plane.title = plane.title.replace("F15E", "F-15E")
 
 
@@ -511,10 +512,12 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        #stats_handler.increment_stat('homepage_loads')
+        stats_handler.increment_stat('homepage_loads')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
-                               some_random_current_planes=some_random_current_planes(10))
+                               some_random_current_planes=some_random_current_planes(10),
+                               planes_ever=stats_handler.planes_created,
+                               updates_ever=stats_handler.location_updates)
 
 
 @app.route('/view/<ident_public_key>')
@@ -547,7 +550,7 @@ def show_map(ident_public_key):
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 
-    #stats_handler.increment_stat('map_loads')
+    stats_handler.increment_stat('map_loads')
 
     return render_template('map.html',
                            ident_public_key=ident_public_key,
@@ -564,7 +567,15 @@ def show_world_map():
 
 @app.route('/stats')
 def stats_endpoint():
-    return jsonify(stats_handler.return_stats())
+
+    stats_dictionary = {
+        'history': stats_handler.return_stats(),
+        'now': {
+            'current_planes': int(number_of_current_planes())
+        }
+    }
+
+    return jsonify(stats_dictionary)
 
 
 @app.route('/latestclient')
@@ -576,14 +587,15 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
-    #stats_handler.increment_stat('downloads')
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-setup.zip')
+    stats_handler.increment_stat('downloads')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
+@app.route('/download/findmyplane-client.zip')
 def download_exe_link():
-    #stats_handler.increment_stat('downloads')    
-    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.2/findmyplane-client.exe")
+    stats_handler.increment_stat('downloads')    
+    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-client.zip")
 
 
 @app.route('/ga_ping')
