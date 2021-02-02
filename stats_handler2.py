@@ -39,4 +39,3 @@ def return_all_events():
         'test_event': count_events('test_event')
     }
     return dictionary_to_return
-
