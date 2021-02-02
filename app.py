@@ -14,7 +14,7 @@ from datetime import datetime
 from sqlalchemy.sql.expression import false
 
 import nearby_city_api
-import stats_handler
+import stats_handler2
 
 import xmltodict
 import json
@@ -32,16 +32,16 @@ error_message_400 = {'status': 'error',
                      'message': 'The necessary variables were not provided. Please check the API documentation.'}
 
 
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
+#import sentry_sdk
+#from sentry_sdk.integrations.flask import FlaskIntegration
 
 
 # Sentry
-sentry_sdk.init(
-    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
-    integrations=[FlaskIntegration()],
-    traces_sample_rate=1.0
-)
+#sentry_sdk.init(
+#    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
+#    integrations=[FlaskIntegration()],
+#    traces_sample_rate=1.0
+#)
 
 
 # Define flask variables
@@ -200,7 +200,7 @@ def api_new_plane():
         "ident_private_key": private_key
     }
 
-    stats_handler.increment_stat('planes_created')
+    stats_handler2.log_event('new_plane')
 
     return jsonify(output_dictionary)
 
@@ -287,7 +287,7 @@ def api_update_location():
         backend_update_plane_descriptions()
 
     if data_received['ident_public_key'] != "DUMMY":
-        stats_handler.increment_stat('location_updates')
+        stats_handler2.log_event('location_update')
 
     return jsonify({'status': 'success'})
 
@@ -512,12 +512,12 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        stats_handler.increment_stat('homepage_loads')
+        stats_handler2.log_event('page_load')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
                                some_random_current_planes=some_random_current_planes(10),
-                               planes_ever=stats_handler.planes_created,
-                               updates_ever=stats_handler.location_updates)
+                               planes_ever=stats_handler2.count_events('new_plane'),
+                               updates_ever=stats_handler2.count_events('location_update'))
 
 
 @app.route('/view/<ident_public_key>')
@@ -550,7 +550,7 @@ def show_map(ident_public_key):
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 
-    stats_handler.increment_stat('map_loads')
+    stats_handler2.log_event('map_load')
 
     return render_template('map.html',
                            ident_public_key=ident_public_key,
@@ -560,6 +560,9 @@ def show_map(ident_public_key):
 
 @app.route('/view_world')
 def show_world_map():
+
+    stats_handler2.log_event('world_map_load')
+
     return render_template('map.html',
                            ident_public_key="WORLD",
                            just_map = False)
@@ -569,7 +572,7 @@ def show_world_map():
 def stats_endpoint():
 
     stats_dictionary = {
-        'history': stats_handler.return_stats(),
+        'history': stats_handler2.return_all_events(),
         'now': {
             'current_planes': int(number_of_current_planes())
         }
@@ -587,22 +590,15 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
-    stats_handler.increment_stat('downloads')
+    stats_handler2.log_event('download')
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 @app.route('/download/findmyplane-client.zip')
 def download_exe_link():
-    stats_handler.increment_stat('downloads')    
+    stats_handler2.log_event('download')
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-client.zip")
-
-
-@app.route('/ga_ping')
-def trigger_error():
-    #ga.send_event('ping!', 'ping!!', 'what')
-
-    return "done"
 
 
 # All of thse are parsing PLN endpoints
