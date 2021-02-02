@@ -204,11 +204,11 @@ def api_new_plane():
     stats_handler2.log_event('new_plane')
 
     # Tweet
-    try:
-        tweet_message = "New flight: " + plane_title + " with callsign " + atc_id + ". Follow along live at https://findmyplane.live/view/" + public_key
-        tweeter.post_tweet(tweet_message)
-    except:
-        pass
+    #try:
+    #    tweet_message = "New flight: " + plane_title + " with callsign " + atc_id + ". Follow along live at https://findmyplane.live/view/" + public_key
+    #    tweeter.post_tweet(tweet_message)
+    #except:
+    #    pass
 
     return jsonify(output_dictionary)
 
@@ -429,6 +429,38 @@ def api_view_plane_data(ident_public_key="none"):
 
 
 # Backend endpoints
+
+@app.route('/backend/random_tweet')
+def random_tweet():
+    if int(number_of_current_planes()) < 3:
+        return "Nobody here mate"
+
+    random_planes = some_random_current_planes(how_many=20)
+    random_plane = random.choice(random_planes)
+
+    if random_plane.full_plane_description == None:
+        stats_handler2.log_event('tweet_nothing_to_say')
+        return "Nothing to say mate"
+
+    if random_plane.ident_public_key == "DUMMY":
+        stats_handler2.log_event('tweet_plane_is_dummy')
+        return "That plane is a dummy"        
+    
+    if "null island" in random_plane.full_plane_description:
+        stats_handler2.log_event('tweet_plane_is_nowhere')
+        return "That plane is nowhere"
+
+    try:
+        message_to_tweet = "Current flight: " + random_plane.full_plane_description + ". Follow along at https://findmyplane.live/view/" + random_plane.ident_public_key
+        tweeter.post_tweet (message_to_tweet)
+    except:
+        stats_handler2.log_event('tweet_error')
+        return "Something went wrong"
+
+    stats_handler2.log_event('tweet_sent')
+    return "All good"
+
+
 
 @app.route('/backend/update_plane_descriptions')
 def backend_update_plane_descriptions():

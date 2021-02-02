@@ -36,6 +36,11 @@ def return_all_events():
         'new_plane': count_events('new_plane'),
         'location_update': count_events('location_update'),
         'world_map_load': count_events('world_map_load'),
-        'test_event': count_events('test_event')
+        'test_event': count_events('test_event'),
+        'tweet_sent': count_events('tweet_sent'),
+        'tweet_error': count_events('tweet_error'),
+        'tweet_nothing_to_say': count_events('tweet_nothing_to_say'),
+        'tweet_plane_is_dummy': count_events('tweet_plane_is_dummy'),
+        'tweet_plane_is_nowhere': count_events('tweet_plane_is_nowhere')
     }
     return dictionary_to_return
