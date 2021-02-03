@@ -45,6 +45,11 @@
 	<script src="/static/vendor/leaflet-providers/leaflet-providers.js"></script>
 	<script src='https://unpkg.com/leaflet.marker.slideto@0.2.0/Leaflet.Marker.SlideTo.js'></script>
 
+    <!-- Leaflet marketcluster -->
+    <script src="/static/vendor/leaflet-mastercluster/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="/static/vendor/leaflet-mastercluster/MarkerCluster.css">
+    <link rel="stylesheet" href="/static/vendor/leaflet-mastercluster/MarkerCluster.Default.css">
+
 	<!-- Fontawesome JS-->
 	<script src="https://kit.fontawesome.com/99043d701d.js" crossorigin="anonymous"></script>
 
@@ -284,7 +289,7 @@
 
     // Create traffic layers and add to the map
     // Fly By Wire
-    var flybywireTrafficLayerGroup = new L.layerGroup();
+    var flybywireTrafficLayerGroup = L.markerClusterGroup({ maxClusterRadius: 20 });
     map.addLayer(flybywireTrafficLayerGroup);
 
     var findmyplaneTrafficLayerGroup = new L.layerGroup();
