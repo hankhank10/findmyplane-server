@@ -84,7 +84,7 @@ class Plane(db.Model):
 
     @hybrid_property
     def current_compass_less_90(self):
-        if self.current_compass is not None:
+        if self.current_compass is None:
             return 0
 
         try:
@@ -432,7 +432,7 @@ def api_view_plane_data(ident_public_key="none"):
 
 @app.route('/backend/random_tweet')
 def random_tweet():
-    if int(number_of_current_planes()) < 3:
+    if int(number_of_current_planes()) < 5:
         return "Nobody here mate"
 
     random_planes = some_random_current_planes(how_many=20)
@@ -451,7 +451,7 @@ def random_tweet():
         return "That plane is nowhere"
 
     try:
-        message_to_tweet = "Current flight: " + random_plane.full_plane_description + ". Follow along at https://findmyplane.live/view/" + random_plane.ident_public_key
+        message_to_tweet = "Live flight: " + random_plane.full_plane_description + ". Follow along at https://findmyplane.live/view/" + random_plane.ident_public_key
         tweeter.post_tweet (message_to_tweet)
     except:
         stats_handler2.log_event('tweet_error')
@@ -558,6 +558,11 @@ def index():
                                some_random_current_planes=some_random_current_planes(10),
                                planes_ever=stats_handler2.count_events('new_plane'),
                                updates_ever=stats_handler2.count_events('location_update'))
+
+
+@app.route('/someplanes')
+def some_planes():
+    return str(some_random_current_planes(10)[0].current_compass_less_90)
 
 
 @app.route('/view/<ident_public_key>')
