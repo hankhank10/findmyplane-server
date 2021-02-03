@@ -580,7 +580,7 @@ def show_map(ident_public_key):
         plane = Plane.query.filter_by(ident_public_key = ident_public_key).first()
 
         if bool(plane) == False:
-            flash ("No record of ident "+ ident_public_key + " with Find My Plane")
+            flash("No record of ident "+ ident_public_key + " with Find My Plane")
             return redirect(url_for('index'))
 
     if source == "flybywire":
