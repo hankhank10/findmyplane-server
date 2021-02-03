@@ -278,16 +278,16 @@ def api_update_location():
 
 
     # Create waypoint record
-    #if data_received['ident_public_key'] != "DUMMY":
-    #    new_waypoint = Waypoint (
-    #        ident_public_key = data_received['ident_public_key'].upper(),
-    #        latitude = data_received['current_latitude'],
-    #        longitude = data_received['current_longitude'],
-    #        compass = data_received['current_compass'],
-    #        altitude = data_received['current_altitude']
-    #    )
-    #
-    #    db.session.add(new_waypoint)
+    if data_received['ident_public_key'] != "DUMMY":
+        new_waypoint = Waypoint (
+            ident_public_key = data_received['ident_public_key'].upper(),
+            latitude = data_received['current_latitude'],
+            longitude = data_received['current_longitude'],
+            compass = data_received['current_compass'],
+            altitude = data_received['current_altitude']
+        )
+    
+        db.session.add(new_waypoint)
         
     db.session.commit()
 
@@ -472,7 +472,7 @@ def backend_update_plane_descriptions():
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
                 print ("Deleting ", plane.ident_public_key)
-                db.session.delete(plane)
+                #db.session.delete(plane)
         
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
