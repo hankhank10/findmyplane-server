@@ -33,16 +33,16 @@ error_message_400 = {'status': 'error',
                      'message': 'The necessary variables were not provided. Please check the API documentation.'}
 
 
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
+#import sentry_sdk
+#from sentry_sdk.integrations.flask import FlaskIntegration
 
 
 # Sentry
-sentry_sdk.init(
-    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
-    integrations=[FlaskIntegration()],
-    traces_sample_rate=1.0
-)
+#sentry_sdk.init(
+#    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
+#    integrations=[FlaskIntegration()],
+#    traces_sample_rate=1.0
+#)
 
 
 # Define flask variables
@@ -591,7 +591,7 @@ def show_map(ident_public_key):
             json_output = []
             logging.error("Fly By Wire API returned an error when trying to search for flight  " + ident_public_key)
 
-        if json_output == [] or json_output[0]['flight'] != ident_public_key: 
+        if json_output == [] or json_output['fullMatch'] == None:
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 

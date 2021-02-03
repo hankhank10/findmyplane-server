@@ -169,11 +169,11 @@ function getSimulatorData() {
                 if (data != []) {
                 
                     if (showMyPlane === true) {
-                        altitude = data[0].trueAltitude;
-                        compass = data[0].heading;
-                        latitude = data[0].location.y;
-                        longitude = data[0].location.x;
-                        lastPlaneTimestamp = data[0].lastContact;
+                        altitude = data['fullMatch'].trueAltitude;
+                        compass = data['fullMatch'].heading;
+                        latitude = data['fullMatch'].location.y;
+                        longitude = data['fullMatch'].location.x;
+                        lastPlaneTimestamp = data['fullMatch'].lastContact;
                         secondsSinceLastPlaneTimestamp = 0.1;
                     }
     
