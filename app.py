@@ -458,7 +458,7 @@ def random_tweet():
         tweeter.post_tweet (message_to_tweet)
     except:
         stats_handler2.log_event('tweet_error')
-        return "Something went wrong"
+        return "Something went wrong" + message_to_tweet
 
     stats_handler2.log_event('tweet_sent')
     return "All good"
