@@ -24,9 +24,9 @@ import os
 from pathlib import Path
 
 import requests
-
 import logging
-import seqlog
+import firehose
+
 from flask_cors import CORS
 
 # Error messages
@@ -42,15 +42,6 @@ error_message_400 = {'status': 'error',
 #    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
 #    integrations=[FlaskIntegration()],
 #    traces_sample_rate=1.0
-#)
-
-#log_handler = seqlog.log_to_seq(
-#    "http://178.128.165.188:5341/",
-#    "",
-#    level=logging.INFO,
-#    auto_flush_timeout=0.2,
-#    additional_handlers=[logging.StreamHandler()],
-#    override_root_logger=True
 #)
 
 # Define flask variables
@@ -130,6 +121,7 @@ class Waypoint(db.Model):
 
 @app.route('/api')
 def api_docs():
+    seq_logger.log_to_seq ("Page load")
     return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
 
 
@@ -563,6 +555,7 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
+        firehose.send_hose("page_load", page_url="index")
         stats_handler2.log_event('page_load')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
