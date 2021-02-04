@@ -201,7 +201,7 @@ def api_new_plane():
         "ident_private_key": private_key
     }
 
-    stats_handler2.log_event('new_plane')
+    stats_handler2.log_event('new_plane', public_key)
 
     # Tweet
     #try:
@@ -295,7 +295,7 @@ def api_update_location():
         backend_update_plane_descriptions()
 
     if data_received['ident_public_key'] != "DUMMY":
-        stats_handler2.log_event('location_update')
+        stats_handler2.log_event('location_update', data_received['ident_public_key'])
 
     return jsonify({'status': 'success'})
 
@@ -556,7 +556,7 @@ def index():
 
     if request.method == 'GET':
         firehose.send_hose("page_load", page_url="index")
-        stats_handler2.log_event('page_load')
+        stats_handler2.log_event('page_load', 'index')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
                                some_random_current_planes=some_random_current_planes(10),
@@ -639,14 +639,14 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
-    stats_handler2.log_event('download')
+    stats_handler2.log_event('download', 'setup')
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 @app.route('/download/findmyplane-client.zip')
 def download_exe_link():
-    stats_handler2.log_event('download')
+    stats_handler2.log_event('download', 'client')
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-client.zip")
 
 
