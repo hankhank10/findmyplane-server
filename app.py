@@ -483,6 +483,9 @@ def backend_update_plane_descriptions():
                     plane.title = plane.title.replace("Aircraft Mega Pack", "")
                     
                     plane.title = plane.title.replace("F15E", "F-15E")
+                    
+                    plane.title = plane.title.replace("_", " ")
+
 
 
                 plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)

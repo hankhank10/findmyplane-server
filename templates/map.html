@@ -26,6 +26,22 @@
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
     </script>
 
+    <!-- Matomo -->
+    <script type="text/javascript">
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+        var u="//hankvps.com/matomo/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '1']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
+    <!-- End Matomo Code -->
+
     <meta charset="UTF-8">
     <title>Find My Plane -  {{ ident_public_key }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
@@ -199,6 +215,8 @@
     var simple = new L.tileLayer.provider('CartoDB.Voyager');
     var openstreet = new L.tileLayer.provider('OpenStreetMap.Mapnik');
     var grayscale = new L.tileLayer.provider('CartoDB.Positron');
+    var stadia_dark = new L.tileLayer.provider('Stadia.AlidadeSmoothDark');
+    var stadia_smooth = new L.tileLayer.provider('Stadia.AlidadeSmooth')
     var basic = new L.tileLayer.provider('Jawg.Terrain', {
         variant: '',
         accessToken: 'CQVU4GpEMHf6XeTxVy2x2zRCDJpr6zFX61tYzcs27Jeus4kfc9XBUNfz3mhPakJZ'
@@ -215,13 +233,15 @@
     });
 
     // Adding layers to the map
-    map.addLayer(basic);
+    map.addLayer(simple);
 
     var baseLayers = {
-        "Grayscale": grayscale,
         "Open Street": openstreet,
+        "Pretty Street": basic,
+        "Grayscale": grayscale,
+        "Dark Mode!": stadia_dark,
+        "Smooth": stadia_smooth,
         "Pale": simple,
-        "Default": basic,
     }
     var overlays = {
         "Aviation": openaip_cached_basemap
