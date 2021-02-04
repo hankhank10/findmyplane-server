@@ -66,6 +66,7 @@ def fire_hose():
     new_events = RecordableEvent.query().filter_by(flushed=0).all()
 
     payload = ""
+    number_of_events_sent = 0
 
     for each_event in new_events:
         event_dictionary = {
@@ -77,8 +78,9 @@ def fire_hose():
         event_json = json.dumps(event_dictionary)
         payload = payload + event_json + "\n"
         each_event.flushed = 1
+        number_of_events_sent = number_of_events_sent + 1
 
-    print (payload)
+    #print (payload)
     if payload == "":
         return "empty"
 
@@ -86,8 +88,11 @@ def fire_hose():
 
     if r.status_code == 200:
         db.session.commit()
+        return str(number_of_events_sent) + " events flushed"
+    else:
+        return "error" + str(r.status_code)
 
-    print (r.status_code)
+    #print (r.status_code)
 
 
 #db.create_all()

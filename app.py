@@ -634,6 +634,12 @@ def stats_endpoint():
     return jsonify(stats_dictionary)
 
 
+@app.route('/stats/fire_hose')
+def fire_hose():
+    fire_hose_status = stats_handler2.fire_hose()
+    return fire_hose_status
+
+
 @app.route('/latestclient')
 def latest_client_check():
     return "Alpha 0.2"
