@@ -121,7 +121,7 @@ class Waypoint(db.Model):
 
 @app.route('/api')
 def api_docs():
-    seq_logger.log_to_seq ("Page load")
+    firehose.send_hose("page_load", page_url="api")
     return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
 
 
@@ -210,6 +210,7 @@ def api_new_plane():
     #except:
     #    pass
 
+    firehose.send_hose("new_plane_created", plane_id=public_key)
     return jsonify(output_dictionary)
 
 
@@ -296,6 +297,8 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler2.log_event('location_update')
+
+    #print(firehose.send_hose("location_update", plane_id = "TEST"))
 
     return jsonify({'status': 'success'})
 
@@ -471,7 +474,8 @@ def backend_update_plane_descriptions():
     for plane in planes:
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
-                print ("Deleting ", plane.ident_public_key)
+                pass
+                #print ("Deleting ", plane.ident_public_key)
                 #db.session.delete(plane)
         
         if plane.is_current and plane.ever_received_data:

@@ -14,7 +14,7 @@ def send_hose(event_type, page_url = None, plane_id=None, other_variable=None):
     try:
         payload = {
             'event_type': event_type,
-            'page_url': event_type,
+            'page_url': page_url,
             'plane_id': plane_id,
             'other_variable': other_variable
         }
@@ -23,9 +23,12 @@ def send_hose(event_type, page_url = None, plane_id=None, other_variable=None):
         return "error"
 
     if r.status_code == 200:
+        print (plane_id)
         return "ok"
     else:
+        print ("####Firehose error")
         return "error"
+
 
 
 send_hose("firehose_started")
