@@ -13,5 +13,5 @@ api = tweepy.API(auth)
 
 # Create a tweet
 def post_tweet(tweet_content):
-    api.update_status(tweet_content)
+    #api.update_status(tweet_content)
     return
