@@ -44,14 +44,14 @@ error_message_400 = {'status': 'error',
 #    traces_sample_rate=1.0
 #)
 
-log_handler = seqlog.log_to_seq(
-    "http://178.128.165.188:5341/",
-    "",
-    level=logging.INFO,
-    auto_flush_timeout=0.2,
-    additional_handlers=[logging.StreamHandler()],
-    override_root_logger=True
-)
+#log_handler = seqlog.log_to_seq(
+#    "http://178.128.165.188:5341/",
+#    "",
+#    level=logging.INFO,
+#    auto_flush_timeout=0.2,
+#    additional_handlers=[logging.StreamHandler()],
+#    override_root_logger=True
+#)
 
 # Define flask variables
 app = Flask(__name__)
