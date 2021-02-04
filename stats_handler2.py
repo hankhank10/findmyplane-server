@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 import json
 
+
 # Database settings
 db = ActiveAlchemy('sqlite:///stats.sqlite')
 
@@ -85,7 +86,7 @@ def fire_hose():
         return "empty"
 
     r = requests.post(url=combined_url, data=payload)
-
+        
     if r.status_code == 200:
         db.session.commit()
         return str(number_of_events_sent) + " events flushed"
@@ -95,10 +96,3 @@ def fire_hose():
     #print (r.status_code)
 
 
-#db.create_all()
-
-#for a in range(1,1000):
-#    log_event("test_event" + str(a))
-
-#print(str(count_events("test_event")))
-#print (fire_hose())
