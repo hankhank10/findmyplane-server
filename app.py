@@ -26,6 +26,7 @@ from pathlib import Path
 import requests
 
 import logging
+import seqlog
 from flask_cors import CORS
 
 # Error messages
@@ -36,7 +37,6 @@ error_message_400 = {'status': 'error',
 #import sentry_sdk
 #from sentry_sdk.integrations.flask import FlaskIntegration
 
-
 # Sentry
 #sentry_sdk.init(
 #    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
@@ -44,6 +44,14 @@ error_message_400 = {'status': 'error',
 #    traces_sample_rate=1.0
 #)
 
+log_handler = seqlog.log_to_seq(
+    "http://178.128.165.188:5341/",
+    "",
+    level=logging.INFO,
+    auto_flush_timeout=0.2,
+    additional_handlers=[logging.StreamHandler()],
+    override_root_logger=True
+)
 
 # Define flask variables
 app = Flask(__name__)
