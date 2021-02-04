@@ -25,7 +25,6 @@ from pathlib import Path
 
 import requests
 import logging
-import firehose
 
 from flask_cors import CORS
 
@@ -121,7 +120,6 @@ class Waypoint(db.Model):
 
 @app.route('/api')
 def api_docs():
-    firehose.send_hose("page_load", page_url="api")
     return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
 
 
@@ -210,7 +208,6 @@ def api_new_plane():
     #except:
     #    pass
 
-    firehose.send_hose("new_plane_created", plane_id=public_key)
     return jsonify(output_dictionary)
 
 
@@ -297,8 +294,6 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler2.log_event('location_update', data_received['ident_public_key'])
-
-    #print(firehose.send_hose("location_update", plane_id = "TEST"))
 
     return jsonify({'status': 'success'})
 
@@ -559,7 +554,6 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        firehose.send_hose("page_load", page_url="index")
         stats_handler2.log_event('page_load', 'index')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
