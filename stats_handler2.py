@@ -99,6 +99,7 @@ def create_event_history(event_type, period_type, most_recent_period, oldest_per
         event_dictionary = {
             'date': period_name.timestamp(),
             'sensible_date': period_name.strftime("%d %b"),
+            'sensible_hour': period_name.strftime("%H:00 %a"),
             'value': period_value
         }
         event_history.append(event_dictionary)
