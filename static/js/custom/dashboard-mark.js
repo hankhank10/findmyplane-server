@@ -1,3 +1,5 @@
+refreshData();
+
 
 function refreshData() {
 
@@ -9,6 +11,24 @@ function refreshData() {
     $.getJSON("https://findmyplane.live/stats/history/new_plane/day/0/1", function(data) {
         $('#planes_today').text(data[0].value)
         $('#planes_yesterday').text(data[1].value)
+    })
+
+    $.getJSON("https://findmyplane.live/stats/history/location_update/hour/1/24", function(data) {
+
+        let counter = 0;
+        for (i = 0; i < data.length; i++) {
+            counter = counter + data[i].value
+        }
+        $('#updates_last_24_hours').text(Math.round(counter/1000)+"k")
+    })
+
+    $.getJSON("https://findmyplane.live/stats/history/location_update/hour/25/48", function(data) {
+        
+        let counter = 0;
+        for (i = 0; i < data.length; i++) {
+            counter = counter + data[i].value
+        }
+        $('#updates_24_hours_before_that').text(Math.round(counter/1000)+"k")
     })
 
     $.getJSON("https://findmyplane.live/stats/history/location_update/day/0/1", function(data) {
@@ -36,7 +56,7 @@ function refreshData() {
 
 var intervalId = window.setInterval(function(){
     refreshData();
-}, 5000);
+}, 30000);
 
 $(function () {
     

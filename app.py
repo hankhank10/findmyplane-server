@@ -26,8 +26,6 @@ from pathlib import Path
 import requests
 import logging
 
-from prometheus_flask_exporter import PrometheusMetrics
-
 from flask_cors import CORS
 
 # Error messages
@@ -50,9 +48,6 @@ app = Flask(__name__)
 app.secret_key = 'sdfdsagfdggdfsgdfg988'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 CORS(app)
-
-# Prometheus
-metrics = PrometheusMetrics(app)
 
 # DB initialisation
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///findmyplanedb.sqlite'
@@ -646,7 +641,7 @@ def stats_history(event_type, period_type, most_recent_period, oldest_period):
     return jsonify(output)
 
 
-@app.route('/statschart')
+@app.route('/activity')
 def statschart():
     return render_template('dashboard.html')
 
