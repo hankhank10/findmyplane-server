@@ -645,9 +645,10 @@ def stats_history(event_type, period_type, most_recent_period, oldest_period):
     output = stats_handler2.create_event_history(event_type, period_type, int(most_recent_period), int(oldest_period))
     return jsonify(output)
 
+
 @app.route('/statschart')
 def statschart():
-    return render_template('CanvasJSexample.html')
+    return render_template('dashboard.html')
 
 
 @app.route('/latestclient')
@@ -670,7 +671,7 @@ def download_exe_link():
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-client.zip")
 
 
-# All of thse are parsing PLN endpoints
+# All of these are parsing PLN endpoints
 def open_file(filename):
     with open (filename, 'r') as xmlfile:
         xml_string = xmlfile.read()
