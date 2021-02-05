@@ -639,6 +639,17 @@ def fire_hose():
     return fire_hose_status
 
 
+@app.route('/stats/history/<event_type>/<period_type>/<most_recent_period>/<oldest_period>')
+def stats_history(event_type, period_type, most_recent_period, oldest_period):
+
+    output = stats_handler2.create_event_history(event_type, period_type, int(most_recent_period), int(oldest_period))
+    return jsonify(output)
+
+@app.route('/statschart')
+def statschart():
+    return render_template('CanvasJSexample.html')
+
+
 @app.route('/latestclient')
 def latest_client_check():
     return "Alpha 0.2"

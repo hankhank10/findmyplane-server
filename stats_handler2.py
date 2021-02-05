@@ -1,5 +1,5 @@
 from active_alchemy import ActiveAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import json
 
@@ -23,6 +23,31 @@ class RecordableEvent(db.Model):
     flushed = db.Column(db.Integer)
 
 
+def time_range(period_type, how_many_back):
+
+    right_now = datetime.utcnow()
+
+    if period_type.upper() == "DAY":
+        reference_point = right_now - timedelta(days=how_many_back)
+        start_of_period = reference_point.replace(microsecond=0, second=0, minute=0, hour=0)
+        end_of_period = start_of_period + timedelta(days=1)
+
+    if period_type.upper() == "HOUR":
+        reference_point = right_now - timedelta(hours=how_many_back)
+        start_of_period = reference_point.replace(microsecond=0, second=0, minute=0)
+        end_of_period = start_of_period + timedelta(hours=1)
+
+    if period_type.upper() == "MINUTE":
+        reference_point = right_now - timedelta(minutes=how_many_back)
+        start_of_period = reference_point.replace(microsecond=0, second=0)
+        end_of_period = start_of_period + timedelta(minutes=1)
+
+    if how_many_back == 0:
+        end_of_period = right_now
+
+    return start_of_period, end_of_period
+
+
 def log_event(event_type, event_detail=None):
     new_event = RecordableEvent (
         event_type = event_type,
@@ -37,9 +62,48 @@ def log_event(event_type, event_detail=None):
     return "success"
 
 
-def count_events(event_type):
-    event_count = RecordableEvent.query().filter_by(event_type=event_type).count()
+def count_events(event_type = None):
+    if event_type is None:
+        event_count = RecordableEvent.query().count()
+    else:
+        event_count = RecordableEvent.query().filter_by(event_type=event_type).count()
+
     return event_count
+
+
+def count_events_by_time(event_type, period_type, how_many_back):
+
+    start_period, end_period = time_range(period_type, how_many_back)
+    event_count = RecordableEvent.query().filter(
+        RecordableEvent.event_type == event_type,
+        RecordableEvent.time_it_happened > start_period,
+        RecordableEvent.time_it_happened < end_period).count()
+
+    return event_count
+
+
+def create_event_history(event_type, period_type, most_recent_period, oldest_period):
+
+    event_history = []
+
+    for period in range (most_recent_period, oldest_period+1):
+
+        # Get the name for the period by getting the start date
+        period_start, period_end = time_range(period_type, period)
+        period_name = period_start
+
+        # Query the DB
+        period_value = count_events_by_time(event_type, period_type, period)
+
+        # Return dictionary
+        event_dictionary = {
+            'date': period_name.timestamp(),
+            'sensible_date': period_name.strftime("%d %b"),
+            'value': period_value
+        }
+        event_history.append(event_dictionary)
+
+    return event_history
 
 
 def return_all_events():
@@ -93,6 +157,5 @@ def fire_hose():
     else:
         return "error" + str(r.status_code)
 
-    #print (r.status_code)
 
-
+print (create_event_history('test_event', 'day', 0, 1))

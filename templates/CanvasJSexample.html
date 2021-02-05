@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+window.onload = function() {
+
+var dataPoints = [];
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2",
+	title: {
+		text: "Event log"
+	},
+    axisX:{
+    //Try Changing to MMMM
+        valueFormatString: "DD-MMM"
+    },
+	axisY: {
+		title: "Events",
+		titleFontSize: 24,
+		includeZero: true
+	},
+	data: [{
+		type: "column",
+        xValueType: "dateTime",
+		yValueFormatString: "#,###",
+		dataPoints: dataPoints
+	}]
+});
+
+function addData(data) {
+	for (var i = 0; i < data.length; i++) {
+		dataPoints.push({
+			x: new Date(data[i].date*1000),
+			y: data[i].value
+		});
+	}
+	chart.render();
+
+}
+
+$.getJSON("http://0.0.0.0:8765/stats/history/test_event/day/0/100", addData);
+
+}
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; max-width: 920px; margin: 0px auto;"></div>
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="/static/vendor/dateformat/date.format.js"></script>
+</body>
+</html>
