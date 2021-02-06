@@ -120,6 +120,7 @@ class Waypoint(db.Model):
 
 @app.route('/api')
 def api_docs():
+    stats_handler2.log_event('page_load', 'api')
     return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
 
 
@@ -294,6 +295,7 @@ def api_update_location():
 
     if data_received['ident_public_key'] != "DUMMY":
         stats_handler2.log_event('location_update', data_received['ident_public_key'])
+        pass
 
     return jsonify({'status': 'success'})
 
