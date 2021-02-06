@@ -5,7 +5,7 @@ import json
 
 
 # Database settings
-db = ActiveAlchemy('sqlite:///stats.sqlite')
+db = ActiveAlchemy('mysql+pymysql://mark:kansas01@51.195.171.71/stats')
 
 # Firehose settings
 listener_url = "http://listener-nl.logz.io:8070"
@@ -17,8 +17,8 @@ combined_url = combined_url + "&type=" + message_type
 
 class RecordableEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    event_type = db.Column(db.String)
-    event_detail = db.Column(db.String)
+    event_type = db.Column(db.String(16))
+    event_detail = db.Column(db.String(50))
     time_it_happened = db.Column(db.DateTime)
     flushed = db.Column(db.Integer)
 
@@ -171,4 +171,3 @@ def fire_hose():
         return "error" + str(r.status_code)
 
 
-print (create_event_history('test_event', 'day', 0, 1))
