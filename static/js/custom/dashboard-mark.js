@@ -52,10 +52,6 @@ function refreshData() {
 
 }
 
-var intervalId = window.setInterval(function(){
-    refreshData();
-}, 30000);
-
 $(function () {
     
     // draw empty chart
