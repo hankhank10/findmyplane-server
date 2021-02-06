@@ -17,7 +17,7 @@ combined_url = combined_url + "&type=" + message_type
 
 class RecordableEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    event_type = db.Column(db.String(16))
+    event_type = db.Column(db.String(30))
     event_detail = db.Column(db.String(50))
     time_it_happened = db.Column(db.DateTime)
     flushed = db.Column(db.Integer)
