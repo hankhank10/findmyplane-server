@@ -22,7 +22,7 @@ function refreshData() {
         $('#updates_last_24_hours').text(Math.round(counter/1000)+"k")
     })
 
-    $.getJSON("https://findmyplane.live/stats/history/location_update/hour/25/48", function(data) {
+    $.getJSON("https://findmyplane.live/stats/history/location_update/hour/25/72", function(data) {
         
         let counter = 0;
         for (i = 0; i < data.length; i++) {
