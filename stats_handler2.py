@@ -73,7 +73,12 @@ def count_events(event_type = None):
 
 def count_events_by_time(event_type, period_type, how_many_back):
 
-    start_period, end_period = time_range(period_type, how_many_back)
+    if period_type == "24H":
+        start_period = datetime.utcnow() - timedelta(days=how_many_back + 1)
+        end_period = datetime.utcnow() - timedelta(days=how_many_back)
+    else:
+        start_period, end_period = time_range(period_type, how_many_back)
+    
     event_count = RecordableEvent.query().filter(
         RecordableEvent.event_type == event_type,
         RecordableEvent.time_it_happened > start_period,
@@ -85,11 +90,18 @@ def count_events_by_time(event_type, period_type, how_many_back):
 def create_event_history(event_type, period_type, most_recent_period, oldest_period):
 
     event_history = []
+    a = 0
 
     for period in range (most_recent_period, oldest_period+1):
 
-        # Get the name for the period by getting the start date
-        period_start, period_end = time_range(period_type, period)
+        a = a + 1
+        if period_type == "24H":
+            period_start = datetime.utcnow() - (timedelta(hours= 24 * a))
+            period_end = period_start + (timedelta(hours= 24))
+        else:
+            # Get the name for the period by getting the start date
+            period_start, period_end = time_range(period_type, period)
+        
         period_name = period_start
 
         # Query the DB
