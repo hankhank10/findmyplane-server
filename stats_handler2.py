@@ -61,6 +61,7 @@ def log_event(event_type, event_detail=None):
         db.session.commit()
     except:
         db.session.rollback()
+        return "error"
 
     return "success"
 
