@@ -57,7 +57,10 @@ def log_event(event_type, event_detail=None):
     )
 
     db.session.add(new_event)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
     return "success"
 
