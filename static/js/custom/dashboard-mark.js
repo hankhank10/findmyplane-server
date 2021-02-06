@@ -15,8 +15,8 @@ function refreshData() {
 
     $.getJSON("https://findmyplane.live/stats/history/location_update/24H/0/1", function(data) {
 
-        $('#updates_last_24_hours').text(Math.round(data[0]/1000)+"k")
-        $('#updates_24_hours_before_that').text(Math.round(data[1]/1000)+"k")
+        $('#updates_last_24_hours').text(data[0].value)
+        $('#updates_24_hours_before_that').text(data[1].value)
 
     })
 
