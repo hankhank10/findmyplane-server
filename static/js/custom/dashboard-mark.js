@@ -16,17 +16,8 @@ function refreshData() {
     $.getJSON("https://findmyplane.live/stats/history/location_update/24H/0/1", function(data) {
 
         $('#updates_last_24_hours').text(Math.round(data[0]/1000)+"k")
-        $('#updates_24_hours_before_that').text(Math.round(data[0]/1000)+"k")
+        $('#updates_24_hours_before_that').text(Math.round(data[1]/1000)+"k")
 
-    })
-
-    $.getJSON("https://findmyplane.live/stats/history/location_update/hour/25/72", function(data) {
-        
-        let counter = 0;
-        for (i = 0; i < data.length; i++) {
-            counter = counter + data[i].value
-        }
-        $('#updates_24_hours_before_that').text(Math.round(counter/1000)+"k")
     })
 
     $.getJSON("https://findmyplane.live/stats/history/location_update/day/0/1", function(data) {
