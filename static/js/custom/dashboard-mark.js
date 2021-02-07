@@ -53,7 +53,7 @@ $(function () {
             labels: [],
             datasets: [
                 {
-                    label: "Location updates",
+                    label: "New planes",
                     lineTension: 0.3,
                     backgroundColor: "rgba(78, 115, 223, 0.05)",
                     borderColor: "rgba(78, 115, 223, 1)",
@@ -103,7 +103,7 @@ $(function () {
             labels: [],
             datasets: [
                 {
-                    label: "Location updates",
+                    label: "New planes",
                     //lineTension: 0.3,
                     backgroundColor: "rgba(78, 115, 223, .8)",
                     borderColor: "rgba(78, 115, 223, 1)",
