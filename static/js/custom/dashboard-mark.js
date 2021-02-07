@@ -104,8 +104,8 @@ $(function () {
             datasets: [
                 {
                     label: "Location updates",
-                    lineTension: 0.3,
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    //lineTension: 0.3,
+                    backgroundColor: "rgba(78, 115, 223, 1)",
                     borderColor: "rgba(78, 115, 223, 1)",
                     pointRadius: 3,
                     pointBackgroundColor: "rgba(78, 115, 223, 1)",
