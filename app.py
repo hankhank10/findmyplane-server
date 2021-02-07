@@ -262,12 +262,13 @@ def api_update_location():
             plane_to_update.previous_longitude = plane_to_update.current_longitude
 
         plane_to_update.current_longitude = data_received['current_longitude']    
-    
+
     if 'current_compass' in data_received:
-        current_compass = data_received['current_compass']
-        current_compass = round(current_compass,0)
-        current_compass = '{:.0f}'.format(current_compass)
-        plane_to_update.current_compass = current_compass
+        if data_received['current_compass'] is not None:
+            current_compass = data_received['current_compass']
+            current_compass = round(current_compass,0)
+            current_compass = '{:.0f}'.format(current_compass)
+            plane_to_update.current_compass = current_compass
     
     if 'current_altitude' in data_received: plane_to_update.current_altitude = data_received['current_altitude']
     if 'current_speed' in data_received: plane_to_update.current_speed = data_received['current_speed']
