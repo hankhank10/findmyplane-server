@@ -709,7 +709,7 @@ def fix_waypoints(pln_dictionary):
         latitude_seconds = float(latitude_seconds)
 
         latitude_decimal = latitude_degrees + (latitude_minutes/60) + (latitude_seconds/3600)
-        print (str(latitude_degrees), str(latitude_minutes), str(latitude_seconds), ">", str(latitude_decimal))
+        #print (str(latitude_degrees), str(latitude_minutes), str(latitude_seconds), ">", str(latitude_decimal))
 
         if latitude_direction == "S":
             latitude_decimal = -latitude_decimal
