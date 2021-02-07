@@ -166,7 +166,7 @@ $(function () {
                 if (time_period === "hour") {
                     labels.unshift(response[line].sensible_hour)
                 }
-                datapoints.unshift(response[line].value/1000)
+                datapoints.unshift(response[line].value)
             });
             console.log(labels)
             
