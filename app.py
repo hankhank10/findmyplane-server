@@ -235,12 +235,13 @@ def api_update_location():
         first_time = True
 
     # Get the compass, but if it's none then default to 0
-    current_compass = None
+    current_compass = 0
     if 'current_compass' in data_received:
-        current_compass = data_received['current_compass']
-        if current_compass is not None:
-            current_compass = round(current_compass,0)
-            current_compass = '{:.0f}'.format(current_compass)
+        if data_received['current_compass'] is not None:
+            current_compass = data_received['current_compass']
+
+    current_compass = round(current_compass, 0)
+    current_compass = '{:.0f}'.format(current_compass)
 
     # Do the update for mandatory data
     plane_to_update.last_update = datetime.utcnow()
