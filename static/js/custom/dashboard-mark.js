@@ -145,8 +145,8 @@ $(function () {
         }
     });
 
-    ajax_chart(myChart1, "https://findmyplane.live/stats/history/location_update/day/0/10", "date");
-    ajax_chart(myChart2, "https://findmyplane.live/stats/history/location_update/hour/0/48", "hour");
+    ajax_chart(myChart1, "https://findmyplane.live/stats/history/new_plane/day/0/10", "date");
+    ajax_chart(myChart2, "https://findmyplane.live/stats/history/new_plane/hour/0/48", "hour");
 
 
     // function to update our chart
