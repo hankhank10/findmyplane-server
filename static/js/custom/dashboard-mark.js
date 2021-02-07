@@ -98,7 +98,7 @@ $(function () {
     // draw empty chart
     var ctx = document.getElementById("myAreaChart2").getContext("2d");
     var myChart2 = new Chart(ctx, {
-        type: 'column',
+        type: 'bar',
         data: {
             labels: [],
             datasets: [
