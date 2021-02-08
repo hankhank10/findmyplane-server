@@ -28,6 +28,8 @@ import logging
 
 from flask_cors import CORS
 
+import secretstuff
+
 # Error messages
 error_message_400 = {'status': 'error', 
                      'message': 'The necessary variables were not provided. Please check the API documentation.'}
@@ -45,7 +47,7 @@ error_message_400 = {'status': 'error',
 
 # Define flask variables
 app = Flask(__name__)
-app.secret_key = 'sdfdsagfdggdfsgdfg988'
+app.secret_key = secretstuff.secret_key
 app.config['UPLOAD_FOLDER'] = 'uploads'
 CORS(app)
 

@@ -2,10 +2,11 @@ from active_alchemy import ActiveAlchemy
 from datetime import datetime, timedelta
 import requests
 import json
+import secretstuff
 
 
 # Database settings
-db = ActiveAlchemy('mysql+pymysql://mark:kansas01@51.195.171.71/stats')
+db = ActiveAlchemy(secretstuff.stats_mysql_address)
 
 # Firehose settings
 listener_url = "http://listener-nl.logz.io:8070"

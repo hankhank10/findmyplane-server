@@ -18,3 +18,4 @@ migrations/env.py
 migrations/env.py
 .vscode/settings.json
 migrations/env.py
+secretstuff.py
