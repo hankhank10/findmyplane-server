@@ -622,6 +622,16 @@ def show_world_map():
                            just_map = False)
 
 
+@app.route('/view_world/justmap')
+def show_world_map_just_map():
+
+    stats_handler2.log_event('world_map_load')
+
+    return render_template('map.html',
+                           ident_public_key="WORLD",
+                           just_map = True)
+
+
 @app.route('/stats')
 def stats_endpoint():
 

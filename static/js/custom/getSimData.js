@@ -129,7 +129,7 @@ function getSimulatorData() {
                         var otherPlaneMarker = L.marker([otherPlane.current_latitude, otherPlane.current_longitude], FMPPlaneMarkerOptions);
                         otherPlaneMarker.setRotationAngle(otherPlane.current_compass);
 
-                        otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.ident_public_key, otherPlane.current_altitude, "", "", "findmyplane")).openTooltip();
+                        otherPlaneMarker.bindTooltip(generatePlaneToolTip(otherPlane.title, otherPlane.atc_id, otherPlane.ident_public_key, otherPlane.current_altitude, "", "", otherPlane.client)).openTooltip();
                         otherPlaneMarker.addTo(findmyplaneTrafficLayerGroup)
 
                         howManyFMPPlanesDisplayed = howManyFMPPlanesDisplayed + 1
@@ -357,8 +357,14 @@ function generatePlaneToolTip(aircraftType, flightNumber, ident, altitude, origi
     if (altitude != "") {tooltipText = tooltipText + " at <b>" + altitude + "ft </b>"}
     if (origin != "") {tooltipText = tooltipText + " from <b>" + origin + "</b>"}
     if (destination != "") {tooltipText = tooltipText + " to <b>" + destination + "</b>"}
+
     if (source === "flybywire") {tooltipText = tooltipText + "<br><i>(source: Fly-By-Wire)</i>"}
-    if (source === "findmyplane") {tooltipText = tooltipText + "<br><i>(source: Find My Plane)</i>"}
+
+    if (source === "findmyplane" || source === "Find My Plane") {
+        tooltipText = tooltipText + "<br><i>(source: Find My Plane)</i>"
+    }
+
+    if (source === "lukeairtool") {tooltipText = tooltipText + "<br><i>(source: Luke's Air Tool</i>"}
 
     return tooltipText
 }
