@@ -72,7 +72,7 @@ rollbar.init(
         root=os.path.dirname(os.path.realpath(__file__)),
         allow_logging_basic_config=False)
 
-rollbar.report_message('app.py started')
+rollbar.report_message('app.py started', 'info')
 got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 

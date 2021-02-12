@@ -41,13 +41,18 @@ def find_closest_city (latitude, longitude):
     text_expression = distance + str(r.json()['data'][0]['name'] + ", "+ r.json()['data'][0]['country'])
     
 
-    '{:.2f}'.format(round(2606.89579999999, 2))
+    #'{:.2f}'.format(round(2606.89579999999, 2))
+
+    if 'region' in r.json()['data'][0]:
+        region = r.json()['data'][0]['region']
+    else:
+        region = None
 
     dictionary_to_return = {
         'status': "success",
         'name': r.json()['data'][0]['name'],
         'country': r.json()['data'][0]['country'],
-        'region': r.json()['data'][0]['region'],
+        'region': region,
         'distance': r.json()['data'][0]['distance'],
         'text_expression': text_expression
     }
