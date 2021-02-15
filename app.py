@@ -58,7 +58,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 CORS(app)
 
 # DB initialisation
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///findmyplanedb.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = secretstuff.planes_mysql_address
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
@@ -81,7 +81,7 @@ got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 class Plane(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ident_public_key = db.Column(db.String(6))
-    ident_private_key = db.Column(db.String)
+    ident_private_key = db.Column(db.String(30))
     current_latitude = db.Column(db.Float, default=0)
     current_longitude = db.Column(db.Float, default=0)
     previous_latitude = db.Column(db.Float, default=0)
@@ -92,11 +92,11 @@ class Plane(db.Model):
     last_update = db.Column(db.DateTime, default=datetime.utcnow())
     time_created = db.Column(db.DateTime, default=datetime.utcnow())
     ever_received_data = db.Column(db.Boolean, default=false)
-    title = db.Column(db.String, default="Unknown aircraft")
-    atc_id = db.Column(db.String, default="Unknown callsign")
-    description_of_location = db.Column(db.String)
-    full_plane_description = db.Column(db.String)
-    client = db.Column(db.String, default="Find My Plane")
+    title = db.Column(db.String(30), default="Unknown aircraft")
+    atc_id = db.Column(db.String(30), default="Unknown callsign")
+    description_of_location = db.Column(db.String(100))
+    full_plane_description = db.Column(db.String(200))
+    client = db.Column(db.String(20), default="Find My Plane")
     on_ground = db.Column(db.Boolean, default=False)
 
     @hybrid_property
@@ -128,7 +128,7 @@ class Plane(db.Model):
 
 class Waypoint(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ident_public_key = db.Column(db.String(6), db.ForeignKey('plane.ident_public_key'), nullable=False)
+    ident_public_key = db.Column(db.String(6), nullable=False)
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     compass = db.Column(db.Integer)
@@ -494,8 +494,8 @@ def backend_update_plane_descriptions():
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
                 pass
-                #print ("Deleting ", plane.ident_public_key)
-                #db.session.delete(plane)
+                print ("Deleting ", plane.ident_public_key)
+                db.session.delete(plane)
         
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
@@ -796,6 +796,10 @@ def simplify_route(source_dictionary):
     }
 
     return output_dictionary
+
+
+def create_db():
+    db.create_all()
 
 
 def save_file(filename, pln_dictionary):
