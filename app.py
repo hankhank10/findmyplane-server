@@ -92,7 +92,7 @@ class Plane(db.Model):
     last_update = db.Column(db.DateTime, default=datetime.utcnow())
     time_created = db.Column(db.DateTime, default=datetime.utcnow())
     ever_received_data = db.Column(db.Boolean, default=false)
-    title = db.Column(db.String(30), default="Unknown aircraft")
+    title = db.Column(db.String(200), default="Unknown aircraft")
     atc_id = db.Column(db.String(30), default="Unknown callsign")
     description_of_location = db.Column(db.String(100))
     full_plane_description = db.Column(db.String(200))
@@ -242,6 +242,7 @@ def api_update_location():
     if not 'ident_private_key' in data_received: return jsonify(error_message_400), 400
 
     # Find the plane requested
+    #print (data_received['ident_public_key'])
     plane_to_update = Plane.query.filter_by(
         ident_public_key = data_received['ident_public_key'].upper(), 
         ident_private_key = data_received['ident_private_key']
@@ -493,9 +494,10 @@ def backend_update_plane_descriptions():
     for plane in planes:
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
-                pass
                 print ("Deleting ", plane.ident_public_key)
                 db.session.delete(plane)
+                pass
+
         
         if plane.is_current and plane.ever_received_data:
             if plane.current_latitude or plane.current_longitude != None:
