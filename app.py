@@ -409,7 +409,13 @@ def api_view_plane_data(ident_public_key="none"):
             'on_ground': plane.on_ground,
             'client': plane.client,
             'title': plane.title,
-            'atc_id': plane.atc_id
+            'atc_id': plane.atc_id,
+            'on_ground': plane.on_ground,
+            'seatbelt_sign': plane.seatbelt_sign,
+            'no_smoking_sign': plane.no_smoking_sign,
+            'door_status': plane.door_status,
+            'parking_brake': plane.parking_brake,
+            'gear_handle_position': plane.gear_handle_position
         }
         output_dictionary['my_plane'] = my_plane_dictionary
 
