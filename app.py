@@ -94,10 +94,12 @@ class Plane(db.Model):
     ever_received_data = db.Column(db.Boolean, default=false)
     title = db.Column(db.String(200), default="Unknown aircraft")
     atc_id = db.Column(db.String(30), default="Unknown callsign")
-    description_of_location = db.Column(db.String(100))
-    full_plane_description = db.Column(db.String(200))
+    description_of_location = db.Column(db.String(200))
+    full_plane_description = db.Column(db.String(300))
     client = db.Column(db.String(20), default="Find My Plane")
     on_ground = db.Column(db.Boolean, default=False)
+    seatbelt_sign = db.Column(db.Boolean, default=False)
+    no_smoking_sign = db.Column(db.Boolean, default=False)
 
     @hybrid_property
     def current_compass_less_90(self):
@@ -240,6 +242,8 @@ def api_update_location():
     if data_received is None: return jsonify(error_message_400), 400
     if not 'ident_public_key' in data_received: return jsonify(error_message_400), 400
     if not 'ident_private_key' in data_received: return jsonify(error_message_400), 400
+
+    #print (data_received['ident_public_key'] + "> " + data_received['ident_private_key'])
 
     # Find the plane requested
     #print (data_received['ident_public_key'])
@@ -494,8 +498,8 @@ def backend_update_plane_descriptions():
     for plane in planes:
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
-                print ("Deleting ", plane.ident_public_key)
-                db.session.delete(plane)
+                #print ("Deleting ", plane.ident_public_key)
+                #db.session.delete(plane)
                 pass
 
         
@@ -583,9 +587,8 @@ def index():
         stats_handler2.log_event('page_load', 'index')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
-                               some_random_current_planes=some_random_current_planes(10),
-                               planes_ever=stats_handler2.count_events('new_plane'),
-                               updates_ever=stats_handler2.count_events('location_update'))
+                               some_random_current_planes=some_random_current_planes(10)
+                               )
 
 
 @app.route('/someplanes')
