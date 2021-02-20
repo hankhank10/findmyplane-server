@@ -135,6 +135,7 @@ class Waypoint(db.Model):
     longitude = db.Column(db.Float)
     compass = db.Column(db.Integer)
     altitude = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime)
 
 
 # API Endpoints
@@ -310,7 +311,8 @@ def api_update_location():
             latitude = data_received['current_latitude'],
             longitude = data_received['current_longitude'],
             compass = data_received['current_compass'],
-            altitude = data_received['current_altitude']
+            altitude = data_received['current_altitude'],
+            timestamp = datetime.utcnow()
         )
     
         db.session.add(new_waypoint)
