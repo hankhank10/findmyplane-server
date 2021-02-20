@@ -103,6 +103,7 @@ class Plane(db.Model):
     no_smoking_sign = db.Column(db.Boolean)
     door_status = db.Column(db.Integer)
     parking_brake = db.Column(db.Boolean)
+    gear_handle_position = db.Column(db.Integer)
 
     @hybrid_property
     def current_compass_less_90(self):
@@ -307,6 +308,7 @@ def api_update_location():
     if 'no_smoking_sign' in data_received: plane_to_update.no_smoking_sign = data_received['no_smoking_sign']
     if 'door_status' in data_received: plane_to_update.door_status = data_received['door_status']
     if 'parking_brake' in data_received: plane_to_update.parking_brake = data_received['parking_brake']
+    if 'gear_handle_position' in data_received: plane_to_update.gear_handle_position = data_received['gear_handle_position']
 
     if 'title' in data_received: plane_to_update.title = data_received['title']
     if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
