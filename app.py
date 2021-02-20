@@ -97,9 +97,12 @@ class Plane(db.Model):
     description_of_location = db.Column(db.String(200))
     full_plane_description = db.Column(db.String(300))
     client = db.Column(db.String(20), default="Find My Plane")
+
     on_ground = db.Column(db.Boolean, default=False)
     seatbelt_sign = db.Column(db.Boolean, default=False)
     no_smoking_sign = db.Column(db.Boolean, default=False)
+    door_status = db.Column(db.Integer, default=0)
+    parking_brake = db.Column(db.Boolean, default=False)
 
     @hybrid_property
     def current_compass_less_90(self):
@@ -136,6 +139,7 @@ class Waypoint(db.Model):
     compass = db.Column(db.Integer)
     altitude = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime)
+    on_ground = db.Column(db.Boolean)
 
 
 # API Endpoints
@@ -297,7 +301,13 @@ def api_update_location():
     
     if 'current_altitude' in data_received: plane_to_update.current_altitude = data_received['current_altitude']
     if 'current_speed' in data_received: plane_to_update.current_speed = data_received['current_speed']
+
     if 'on_ground' in data_received: plane_to_update.on_ground = data_received['on_ground']
+    if 'seatbelt_sign' in data_received: plane_to_update.seatbelt_sign = data_received['seatbelt_sign']
+    if 'no_smoking_sign' in data_received: plane_to_update.no_smoking_sign = data_received['no_smoking_sign']
+    if 'door_status' in data_received: plane_to_update.door_status = data_received['door_status']
+    if 'parking_brake' in data_received: plane_to_update.parking_brake = data_received['parking_brake']
+
     if 'title' in data_received: plane_to_update.title = data_received['title']
     if 'atc_id' in data_received: plane_to_update.atc_id = data_received['atc_id']
     if 'client' in data_received: plane_to_update.client = data_received['client']
@@ -312,7 +322,8 @@ def api_update_location():
             longitude = data_received['current_longitude'],
             compass = data_received['current_compass'],
             altitude = data_received['current_altitude'],
-            timestamp = datetime.utcnow()
+            timestamp = datetime.utcnow(),
+            on_ground = plane_to_update.on_ground
         )
     
         db.session.add(new_waypoint)
