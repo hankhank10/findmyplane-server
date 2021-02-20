@@ -98,11 +98,11 @@ class Plane(db.Model):
     full_plane_description = db.Column(db.String(300))
     client = db.Column(db.String(20), default="Find My Plane")
 
-    on_ground = db.Column(db.Boolean, default=False)
-    seatbelt_sign = db.Column(db.Boolean, default=False)
-    no_smoking_sign = db.Column(db.Boolean, default=False)
-    door_status = db.Column(db.Integer, default=0)
-    parking_brake = db.Column(db.Boolean, default=False)
+    on_ground = db.Column(db.Boolean)
+    seatbelt_sign = db.Column(db.Boolean)
+    no_smoking_sign = db.Column(db.Boolean)
+    door_status = db.Column(db.Integer)
+    parking_brake = db.Column(db.Boolean)
 
     @hybrid_property
     def current_compass_less_90(self):
