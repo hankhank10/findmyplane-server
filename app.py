@@ -816,8 +816,28 @@ def simplify_route(source_dictionary):
         output_dictionary.append(this_waypoint)
         a = a + 1
     
+    departure_id = "None"
+    departure_name = "None"
+    destination_id = "None"
+    destination_name = "None"
+    title = "None"
+
+    try:
+        departure_id = source_dictionary['SimBase.Document']['FlightPlan.FlightPlan']['DepartureID']
+        departure_name = source_dictionary['SimBase.Document']['FlightPlan.FlightPlan']['DepartureName']
+        destination_id = source_dictionary['SimBase.Document']['FlightPlan.FlightPlan']['DestinationID']
+        destination_name = source_dictionary['SimBase.Document']['FlightPlan.FlightPlan']['DestinationName']
+        title = source_dictionary['SimBase.Document']['FlightPlan.FlightPlan']['Title']
+    except:
+        pass
+
     output_dictionary = {
         'status': 'success',
+        'title': title,
+        'DepartureID': departure_id,
+        'DepartureName': departure_name,
+        'DestinationID': destination_id,
+        'DestinationName': destination_name,
         'waypoints': output_dictionary
     }
 
