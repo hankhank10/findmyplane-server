@@ -513,20 +513,28 @@ def random_tweet():
 @app.route('/backend/update_plane_descriptions')
 def backend_update_plane_descriptions():
 
+    print ("Updating plane descriptions")
+
     planes = Plane.query.all()  #this should eventually be changed to only show current planes
-    number_of_planes_updated = 0
 
     for plane in planes:
         if plane.ever_received_data and not plane.is_current:
             if plane.ident_public_key != "DUMMY":
-                #print ("Deleting ", plane.ident_public_key)
-                #db.session.delete(plane)
-                pass
+                print ("Deleting ", plane.ident_public_key)
+                db.session.delete(plane)
+                #pass
+    db.session.commit()
 
-        
-        if plane.is_current and plane.ever_received_data:
+    planes = Plane.query.all()  #this should eventually be changed to only show current planes
+    number_of_planes_updated = 0
+
+    for plane in planes:
+
+        #if plane.is_current and plane.ever_received_data:
+        if plane.ever_received_data:
+
             if plane.current_latitude or plane.current_longitude != None:
-
+                
                 if plane.title != None: 
                     plane.title = plane.title.replace("Asobo", "")
                     plane.title = plane.title.replace("DCDesigns_", "")
@@ -537,8 +545,10 @@ def backend_update_plane_descriptions():
                     plane.title = plane.title.replace("_", " ")
 
 
-
                 plane_location = nearby_city_api.find_closest_city(plane.current_latitude, plane.current_longitude)
+
+                print (plane_location['status'])
+                
                 if plane_location['status'] == "success":
                     
                     if plane.current_latitude < 0.02 and plane.current_longitude < 0.02:

@@ -24,6 +24,7 @@ def find_closest_city (latitude, longitude):
         return {'status': 'error'}
     
     if r.status_code != 200:
+        print (r.status_code)
         return {'status': 'error'}
 
     if r.json()['data'] == []:
