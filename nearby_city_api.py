@@ -20,7 +20,7 @@ def find_closest_city (latitude, longitude):
 
     try:
         r = requests.get(url_to_get, params = data_to_pass)
-        print (r.request.url)
+        #print (r.request.url)
     except:
         return {'status': 'error'}
     
