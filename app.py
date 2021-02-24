@@ -126,7 +126,7 @@ class Plane(db.Model):
     
     @hybrid_property
     def is_current(self):
-        if self.seconds_since_last_update < (5 * 60):
+        if self.seconds_since_last_update < (10 * 60):
             return True
         else:
             return False
@@ -537,6 +537,7 @@ def backend_update_plane_descriptions():
                 
                 if plane.title != None: 
                     plane.title = plane.title.replace("Asobo", "")
+                    plane.title = plane.title.replace("OperatorLand", "")
                     plane.title = plane.title.replace("DCDesigns_", "")
                     plane.title = plane.title.replace("Aircraft Mega Pack", "")
                     

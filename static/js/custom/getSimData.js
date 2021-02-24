@@ -40,7 +40,7 @@ window.setInterval(function(){
     };
 
     loadTraffic('flybywire');
-}, 2000);
+}, 1000);
 
 
 function setConnectionStatus(statusToReport) {
