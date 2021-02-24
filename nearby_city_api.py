@@ -12,14 +12,15 @@ def find_closest_city (latitude, longitude):
 
     url_to_get = "http://geodb-free-service.wirefreethought.com/v1/geo/locations/"+lat_lon_string+"/nearbyCities"
     data_to_pass = {
-        'radius': 15000,
+        'radius': 500,
         'limit': 1,
-        'minPopulation': 500000,
+        'minPopulation': 50000,
         'types': 'CITY'
     }
 
     try:
         r = requests.get(url_to_get, params = data_to_pass)
+        print (r.request.url)
     except:
         return {'status': 'error'}
     
