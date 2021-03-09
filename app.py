@@ -126,7 +126,7 @@ class Plane(db.Model):
     
     @hybrid_property
     def is_current(self):
-        if self.seconds_since_last_update < (10 * 60):
+        if self.seconds_since_last_update < (20 * 60):
             return True
         else:
             return False
@@ -727,14 +727,14 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
     stats_handler2.log_event('download', 'setup')
-    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-setup.zip')
+    return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v0.9.0/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 @app.route('/download/findmyplane-client.zip')
 def download_exe_link():
     stats_handler2.log_event('download', 'client')
-    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.8.4/findmyplane-client.zip")
+    return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v0.9.0/findmyplane-client.zip")
 
 
 @app.route('/debug/error')

@@ -229,7 +229,7 @@ function updateMap() {
     var pos = L.latLng(latitude, longitude);
 
     marker.slideTo(	pos, {
-        duration: 1500,
+        duration: 800,
     });
     marker.setRotationAngle(compass);
 
