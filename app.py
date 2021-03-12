@@ -629,7 +629,8 @@ def some_planes():
 
 
 @app.route('/view/<ident_public_key>')
-def show_map(ident_public_key):
+@app.route('/view/<ident_public_key>/<suffix>')
+def show_map(ident_public_key, suffix = None):
 
     if len(ident_public_key) == 5: 
         source = "findmyplane"
@@ -660,10 +661,14 @@ def show_map(ident_public_key):
 
     stats_handler2.log_event('map_load')
 
+    just_map = False
+    if suffix == "just_map":
+        just_map = True
+
     return render_template('map.html',
                            ident_public_key=ident_public_key,
                            source=source,
-                           just_map = False)
+                           just_map = just_map)
 
 
 @app.route('/view_world')
