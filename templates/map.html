@@ -181,10 +181,15 @@
 <script>
 
     let followPlane = true;
-    let showTrack = true;
     let ident_public_key = '{{ ident_public_key }}';
     let showMyPlane = true;
     let source = '{{ source }}';
+
+    let showTrack = true;
+
+    if ($('#navbar').hasClass('d-none')) {
+        showTrack = false;
+    }
 
     zoom_level = 10
 
