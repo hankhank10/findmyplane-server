@@ -105,6 +105,8 @@ class Plane(db.Model):
     parking_brake = db.Column(db.Boolean)
     gear_handle_position = db.Column(db.Integer)
 
+    client_version = db.Column(db.Integer)
+
     @hybrid_property
     def current_compass_less_90(self):
         if self.current_compass is None:
@@ -315,6 +317,8 @@ def api_update_location():
     if 'client' in data_received: plane_to_update.client = data_received['client']
     if 'speed' in data_received: plane_to_update.speed = data_received['speed']
 
+    if 'client_version' in data_received: plane_to_update.client_version = data_received['client_version']
+
 
     # Create waypoint record
     if data_received['ident_public_key'] != "DUMMY":
@@ -415,7 +419,8 @@ def api_view_plane_data(ident_public_key="none"):
             'no_smoking_sign': plane.no_smoking_sign,
             'door_status': plane.door_status,
             'parking_brake': plane.parking_brake,
-            'gear_handle_position': plane.gear_handle_position
+            'gear_handle_position': plane.gear_handle_position,
+            'client_version': plane.client_version
         }
         output_dictionary['my_plane'] = my_plane_dictionary
 

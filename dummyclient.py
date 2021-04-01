@@ -20,13 +20,25 @@ def update_location():
     global server_errors_logged
     global sim_errors_logged
 
+    global current_altitude
+    global vertical_movement
+
     current_latitude = current_latitude
     if current_longitude > 17:
         current_longitude = starting_longitude
     else:
         current_longitude = current_longitude + 0.03
     
-    current_altitude = 22000
+    if current_altitude == 10000:
+        vertical_movement = "up"
+    if current_altitude == 37000:
+        vertical_movement = "down"
+
+    if vertical_movement == "up":
+        current_altitude = current_altitude + 250
+    if vertical_movement == "down":
+        current_altitude = current_altitude - 250
+    
     current_compass = 90
 
     if not error_this_time:
@@ -36,7 +48,12 @@ def update_location():
             'current_latitude': current_latitude,
             'current_longitude': current_longitude,
             'current_compass': current_compass,
-            'current_altitude': current_altitude
+            'current_altitude': current_altitude,
+            'seatbelt_sign': True,
+            'no_smoking_sign': True,
+            'door_status': 1,
+            'gear_handle_position': 1,
+            'client_version': 2000
         }
 
         if verbose: print ("Sending ", data_to_send)
@@ -93,6 +110,8 @@ starting_longitude = 2.3522
 current_latitude = starting_latitude
 current_longitude = starting_longitude
 
+current_altitude = 22000
+vertical_movement = "up"
 
 # Report the info to the server
 run_forever = True
