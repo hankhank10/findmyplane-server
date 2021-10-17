@@ -722,9 +722,10 @@ def stats_history(event_type, period_type, most_recent_period, oldest_period):
     return jsonify(output)
 
 
-@app.route('/donate')
+@app.route('/donation-modal')
 def donate():
-    return render_template('donate.html')
+    return render_template('donation-modal.html')
+
 
 @app.route('/activity')
 def statschart():
