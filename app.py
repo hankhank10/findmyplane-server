@@ -66,14 +66,14 @@ migrate = Migrate(app, db)
 
 
 # Rollbar
-rollbar.init(
-        '11bec99d70ec4f028dada8d1f7996076',
-        'flask',
-        root=os.path.dirname(os.path.realpath(__file__)),
-        allow_logging_basic_config=False)
+#rollbar.init(
+#        '11bec99d70ec4f028dada8d1f7996076',
+#        'flask',
+#        root=os.path.dirname(os.path.realpath(__file__)),
+#        allow_logging_basic_config=False)
 
-rollbar.report_message('app.py started', 'info')
-got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+#rollbar.report_message('app.py started', 'info')
+#got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
 # DB models
