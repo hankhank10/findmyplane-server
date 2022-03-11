@@ -16,7 +16,6 @@ from sqlalchemy.sql.expression import false
 
 import nearby_city_api
 import stats_handler2
-import tweeter
 
 import xmltodict
 import json
