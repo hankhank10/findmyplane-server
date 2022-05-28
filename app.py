@@ -441,45 +441,11 @@ def api_view_plane_data(ident_public_key="none"):
             }
             output_dictionary['other_planes'].append(other_plane_dictionary)
     
-    #if request.endpoint == "my_plane":
-    #    ga.send_event('usage', 'api query one plane', ident_public_key)
-    #if request.endpoint == "all_planes":
-    #    ga.send_event('usage', 'api query all planes', ident_public_key)
 
     return jsonify(output_dictionary)
 
 
 # Backend endpoints
-
-@app.route('/backend/random_tweet')
-def random_tweet():
-    if int(number_of_current_planes()) < 5:
-        return "Nobody here mate"
-
-    random_planes = some_random_current_planes(how_many=20)
-    random_plane = random.choice(random_planes)
-
-    if random_plane.full_plane_description == None:
-        stats_handler2.log_event('tweet_nothing_to_say')
-        return "Nothing to say mate"
-
-    if random_plane.ident_public_key == "DUMMY":
-        stats_handler2.log_event('tweet_plane_is_dummy')
-        return "That plane is a dummy"        
-    
-    if "null island" in random_plane.full_plane_description:
-        stats_handler2.log_event('tweet_plane_is_nowhere')
-        return "That plane is nowhere"
-
-    try:
-        message_to_tweet = "Live flight: " + random_plane.full_plane_description + ". Follow along at https://findmyplane.live/view/" + random_plane.ident_public_key
-        tweeter.post_tweet (message_to_tweet)
-    except:
-        stats_handler2.log_event('tweet_error')
-        return "Something went wrong" + message_to_tweet
-
-    stats_handler2.log_event('tweet_sent')
-    return "All good"
 
 
 
