@@ -34,21 +34,8 @@ import secretstuff
 error_message_400 = {'status': 'error', 
                      'message': 'The necessary variables were not provided. Please check the API documentation.'}
 
-
-#import sentry_sdk
-#from sentry_sdk.integrations.flask import FlaskIntegration
-
-# Sentry
-#sentry_sdk.init(
-#    dsn="https://00a5f5470b9c45d8ba9c438c4e5eae62@o410120.ingest.sentry.io/5598707",
-#    integrations=[FlaskIntegration()],
-#    traces_sample_rate=1.0
-#)
-
 import rollbar
 import rollbar.contrib.flask
-
-
 
 # Define flask variables
 app = Flask(__name__)
@@ -62,17 +49,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
 migrate = Migrate(app, db)
-
-
-# Rollbar
-#rollbar.init(
-#        '11bec99d70ec4f028dada8d1f7996076',
-#        'flask',
-#        root=os.path.dirname(os.path.realpath(__file__)),
-#        allow_logging_basic_config=False)
-
-#rollbar.report_message('app.py started', 'info')
-#got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
 # DB models
@@ -229,13 +205,6 @@ def api_new_plane():
     }
 
     stats_handler2.log_event('new_plane', public_key)
-
-    # Tweet
-    #try:
-    #    tweet_message = "New flight: " + plane_title + " with callsign " + atc_id + ". Follow along live at https://findmyplane.live/view/" + public_key
-    #    tweeter.post_tweet(tweet_message)
-    #except:
-    #    pass
 
     return jsonify(output_dictionary)
 
