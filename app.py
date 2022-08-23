@@ -15,7 +15,6 @@ from datetime import datetime
 from sqlalchemy.sql.expression import false
 
 import nearby_city_api
-import stats_handler2
 
 import xmltodict
 import json
@@ -124,7 +123,6 @@ class Waypoint(db.Model):
 
 @app.route('/api')
 def api_docs():
-    stats_handler2.log_event('page_load', 'api')
     return redirect ("https://app.swaggerhub.com/apis-docs/hankhank/FindMyPlane/")
 
 
@@ -203,8 +201,6 @@ def api_new_plane():
         "ident_public_key": public_key,
         "ident_private_key": private_key
     }
-
-    stats_handler2.log_event('new_plane', public_key)
 
     return jsonify(output_dictionary)
 
@@ -308,7 +304,6 @@ def api_update_location():
         backend_update_plane_descriptions()
 
     if data_received['ident_public_key'] != "DUMMY":
-        stats_handler2.log_event('location_update', data_received['ident_public_key'])
         pass
 
     return jsonify({'status': 'success'})
@@ -555,7 +550,6 @@ def index():
             return redirect (url_for('show_map', ident_public_key=request.form['ident'].upper()))
 
     if request.method == 'GET':
-        stats_handler2.log_event('page_load', 'index')
         return render_template('index.html',
                                number_of_current_planes=number_of_current_planes(),
                                some_random_current_planes=some_random_current_planes(10)
@@ -598,8 +592,6 @@ def show_map(ident_public_key, suffix = None):
             flash ("Can't find plane "+ ident_public_key + " with Fly By Wire")
             return redirect(url_for('index'))
 
-    stats_handler2.log_event('map_load')
-
     just_map = False
     if suffix == "just_map":
         just_map = True
@@ -613,8 +605,6 @@ def show_map(ident_public_key, suffix = None):
 @app.route('/view_world')
 def show_world_map():
 
-    stats_handler2.log_event('world_map_load')
-
     return render_template('map.html',
                            ident_public_key="WORLD",
                            just_map = False)
@@ -623,37 +613,11 @@ def show_world_map():
 @app.route('/view_world/justmap')
 def show_world_map_just_map():
 
-    stats_handler2.log_event('world_map_load')
-
     return render_template('map.html',
                            ident_public_key="WORLD",
                            just_map = True)
 
 
-@app.route('/stats')
-def stats_endpoint():
-
-    stats_dictionary = {
-        'history': stats_handler2.return_all_events(),
-        'now': {
-            'current_planes': int(number_of_current_planes())
-        }
-    }
-
-    return jsonify(stats_dictionary)
-
-
-@app.route('/stats/fire_hose')
-def fire_hose():
-    fire_hose_status = stats_handler2.fire_hose()
-    return fire_hose_status
-
-
-@app.route('/stats/history/<event_type>/<period_type>/<most_recent_period>/<oldest_period>')
-def stats_history(event_type, period_type, most_recent_period, oldest_period):
-
-    output = stats_handler2.create_event_history(event_type, period_type, int(most_recent_period), int(oldest_period))
-    return jsonify(output)
 
 
 @app.route('/donation-modal')
@@ -661,9 +625,6 @@ def donate():
     return render_template('donation-modal.html')
 
 
-@app.route('/activity')
-def statschart():
-    return render_template('dashboard.html')
 
 
 @app.route('/latestclient')
@@ -675,14 +636,12 @@ def latest_client_check():
 @app.route('/download/findmyplane-setup.exe')
 @app.route('/download/findmyplane-setup.zip')
 def download_setup_link():
-    stats_handler2.log_event('download', 'setup')
     return redirect('https://github.com/hankhank10/findmyplane-client/releases/download/v2.0/findmyplane-setup.zip')
 
 
 @app.route('/download/findmyplane-client.exe')
 @app.route('/download/findmyplane-client.zip')
 def download_exe_link():
-    stats_handler2.log_event('download', 'client')
     return redirect("https://github.com/hankhank10/findmyplane-client/releases/download/v2.0/findmyplane-client.zip")
 
 
