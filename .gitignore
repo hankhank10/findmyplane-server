@@ -20,3 +20,4 @@ migrations/env.py
 migrations/env.py
 secretstuff.py
 /migrations
+/.venv
